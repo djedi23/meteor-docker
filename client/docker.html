@@ -1,0 +1,45 @@
+<head>
+  <title>Docker Total Controller</title>
+  <meta name="viewport" content="initial-scale=1" />
+</head>
+<body>
+</body>
+
+
+<template name='home'>
+  <div class="jumbotron">
+    <h2>Docker Total Controller</h2>
+    {{#if currentUser}}
+    {{#unless host}}<p>Try to add some hosts.</p>{{/unless}}
+    {{#unless image}}<p>pull some images; run some applications.</p>{{/unless}}
+    {{/if}}
+    {{#unless currentUser}}<p>You are not logged in. Sign In to start working.</p>{{/unless}}
+  </div>
+  {{#if currentUser}}
+  {{> images}}
+  {{/if}}
+</template>
+
+
+<template name='loading'>
+  <div class="jumbotron">
+    <h2>Loading.</h2>
+    <p>Please wait.</p>
+  </div>
+</template>
+
+
+<template name='noData'>
+  <div class="jumbotron">
+    <h2>No data available.</h2>
+    <p>There are no data to display.</p>
+    {{#if currentUser}}<p>Data are loading.</p>
+    <p>Try to add some hosts; pull some images; run some applications.</p>{{/if}}
+    {{#unless currentUser}}<p>You are not logged in. Sign In to start working.</p>{{/unless}}
+  </div>
+</template>
+
+
+<template name="hostFilter">
+    {{#if multihost}}{{#if isInRole 'image.list'}}<select class="form-control" id="hostSelect"><option></option>{{#each hosts}}<option selected="{{isSelected}}">{{Id}}</option>{{/each}}</select>{{/if}}{{/if}}
+</template>

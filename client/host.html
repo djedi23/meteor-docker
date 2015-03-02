@@ -1,0 +1,69 @@
+<template name="host">
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    {{> runHooks 'template.hosts.toolbar' }}
+  </div>
+    {{#if isInRole 'host.view'}}
+  {{#each this}}
+  <h2><div class="btn-toolbar pull-right" role="toolbar" aria-label="...">
+    {{> runHooks 'template.host.toolbar' }}
+  </div>
+  {{Id}}
+  </h2>
+  {{#unless status}}
+  <div class="panel panel-danger">
+    <div class="panel-heading">
+      <h3 class="panel-title">Error</h3>
+    </div>
+    <div class="panel-body">
+      <table class="table table-striped">
+	
+	{{#each errors}}
+	<tr><td>{{e}}</td><td>{{v}}</td></tr>
+	{{/each}}
+      </table>
+    </div>
+  </div>
+  {{/unless}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Info</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+	<div class="col-md-4">Images: <a href="{{pathFor 'images'}}">{{info.Images}}</a></div>
+	<div class="col-md-4">Containers: <a href="{{pathFor 'containers'}}">{{info.Containers}}</a></div>
+	<div class="col-md-4">Debug: {{info.Debug}}</div>
+      </div>
+      	<table class="table table-condensed table-striped">
+	  <tbody>
+	    {{#each infos}}
+	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Version</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+	<div class="col-md-4">Api Version: {{version.ApiVersion}}</div>
+	<div class="col-md-4">Arch: {{version.Arch}}</div>
+	<div class="col-md-4">Git Commit: {{version.GitCommit}}</div>
+      </div>
+      <div class="row">
+	<div class="col-md-4">Go Version: {{version.GoVersion}}</div>
+	<div class="col-md-4">Kernel Version: {{version.KernelVersion}}</div>
+	<div class="col-md-4">Os: {{version.Os}}</div>
+      </div>
+      <div class="row">
+	<div class="col-md-4">Version: {{version.Version}}</div>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+  {{/if}}
+</template>

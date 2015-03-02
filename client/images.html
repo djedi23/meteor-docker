@@ -1,0 +1,370 @@
+
+<template name="images">
+  <form class="form-inline">
+    <div class="pull-right">
+	{{#if isInRole 'image.pull'}}<a href="{{pathFor 'imagePull'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span><span class="hidden-xs"> pull</span></a>{{/if}}
+    </div>
+    <div class="row">
+    {{> hostFilter}}
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+	<tr>
+	  {{#if multihost}}<th>HOST</th>{{/if}}
+	  <th>REPOSITORY:TAG</th>
+	  <th class="hidden-xs">IMAGE ID</th>
+	  <th>CREATED</th>
+	  <th>VIRTUAL SIZE</th>
+	  {{> runHooks 'template.image.table.extra.title'}}
+	</tr>
+      </thead>
+      <tbody>
+	{{#if isInRole 'image.list'}}
+	{{#each this}}
+	<tr>
+	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
+	  <td>{{#if status}}{{status}}{{/if}}{{#unless status}}<a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{RepoTags}}</a>{{/unless}}</td>
+	  <td class="hidden-xs">{{#unless status}}{{IdShort}}{{/unless}}</td>
+	  <td>{{#if progressDetail.start}}{{progressStart}}{{/if}}{{#unless status}}{{Created}}{{/unless}}</td>
+	  <td>{{#if progressDetail.total}}<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{progressDetail.current}}" aria-valuemin="0" aria-valuemax="{{progressDetail.total}}" style="width:{{progress}}%"></div></div>{{/if}}{{#unless status}}{{VirtualSize}}{{/unless}}</td>
+	  {{> runHooks 'template.image.table.extra.data'}}
+	  <td>
+	    {{#if isInRole 'image.run'}}<a href="{{pathFor 'imageRunParameter' id=Id host=_host}}" role="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> run</span></a>{{/if}}
+	  </td>
+	</tr>
+	{{/each}}
+	{{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>
+
+
+<template name="imageInspect">
+  <ol class="breadcrumb">
+    <li><a href="/">Images</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li class="active">{{IdShort}}</li>
+  </ol>
+
+  {{#if isInRole 'image.view'}}
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="btn-toolbar" role="toolbar" aria-label="...">
+	{{#if isInRole 'image.run'}}<a href="{{pathFor 'imageRunParameter' id=Id id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> run</span></a>{{/if}}
+	{{#if isInRole 'image.rm'}}<button id="brm" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash red"></span><span class="hidden-xs"> remove</span></button>{{/if}}
+	{{#if isInRole 'image.tag'}}<a href="{{pathFor 'imageTagParameter' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-tag"></span><span class="hidden-xs"> tag</span></a>{{/if}}
+	{{#if isInRole 'image.push'}}<a href="{{pathFor 'imagePushParameter' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-upload"></span><span class="hidden-xs"> push</span></a>{{/if}}
+	{{> runHooks 'template.image.actions'}}
+      </div>
+      <div class="row">
+	<div class="col-md-4">Architecture: {{Architecture}}</div>
+	<div class="col-md-4">Os: {{Os}}</div>
+	<div class="col-md-4">Docker Version: {{DockerVersion}}</div>
+      </div>
+      <div class="row">
+	<div class="col-md-4">Created: {{Created}}</div>
+	<div class="col-md-4">Size: {{Size}}</div>
+	<div class="col-md-4">Virtual Size: {{VirtualSize}}</div>
+      </div>
+      <div class="row">
+	<div class="col-md-4">Author: {{Author}}</div>
+	<div class="col-md-8">Comment: {{Comment}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-target="#containerConfig" aria-expanded="false" aria-controls="containerConfig">
+      <h3 class="panel-title">Config</h3>
+    </div>
+    <div id="containerConfig" class="panel-body collapse">
+	<table class="table table-condensed table-striped">
+	  <tbody>
+	    {{#each configs}}
+	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">History</h3>
+    </div>
+    <div class="panel-body">
+      <div class="table-responsive">
+	<table class="table table-condensed table-striped">
+	  <thead>
+	    <tr>
+	      <th>TAG</th>
+	      <th>IMAGE ID</th>
+	      <th>CREATED</th>
+	      <th>CREATED BY</th>
+	      <th>SIZE</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {{#each history}}
+	    <tr>
+	      <td>{{Tags}}</td>
+	      <td>{{IdShort}}</td>
+	      <td>{{Created}}</td>
+	      <td>{{CreatedByShort}}</td>
+	      <td>{{Size}}</td>
+	    </tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+      </div>
+    </div>
+  </div>
+
+  {{> imageModals}}
+  {{/if}}
+</template>
+
+
+<template name="imageRunParameter">
+  <ol class="breadcrumb">
+    <li><a href="/">Images</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li class="active">run</li>
+  </ol> 
+  {{#if isInRole 'image.run'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.image.run.actions'}}
+    </div>
+  </form>
+  {{# autoForm id="imageRun" doc=config schema="runSchemas" type="method" template="bootstrap3-horizontal" meteormethod="image.run"}}
+
+  <div class="form-group">
+    <div class="col-sm-offset-1 col-sm-11">
+      <button type="submit" class="btn btn-primary">Run</button> {{Tags}}
+    </div>
+  </div>
+
+  <div class="row">
+  {{> afQuickField name='name' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+  <div class="row">
+  {{> afQuickField name='command' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+  <div class="row">
+  {{> afQuickField name="args" template="array" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+  <div class="row">
+  {{> afQuickField name="Entrypoint" template="array" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-4">{{> afQuickField name="Tty" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
+    <div class="col-sm-4">{{> afQuickField name="PublishAllPorts" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
+  </div>
+  
+  <div class="row">
+  {{> afQuickField name="publish" template="publish" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+
+  <div class="row">
+  {{> afQuickField name="links" template="links" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+  <div class="row">
+    <div class="col-sm-6">{{> afQuickField name="Binds" template="array" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+    <div class="col-sm-6">{{> afQuickField name="Envs" template="array" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">{{> afQuickField name="AttachStderr" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
+    <div class="col-sm-4">{{> afQuickField name="AttachStdin" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
+    <div class="col-sm-4">{{> afQuickField name="AttachStdout" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
+  </div>
+  <div class="row"> 
+    <div class="col-sm-6">{{> afQuickField name="User" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+    <div class="col-sm-6">{{> afQuickField name="WorkingDir" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">{{> afQuickField name="Memory" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+    <div class="col-sm-6">{{> afQuickField name="MemorySwap" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+  </div>
+  
+  <div class="form-group">
+    <div class="col-sm-offset-1 col-sm-11">
+      <button type="submit" class="btn btn-primary">Run</button>
+    </div>
+  </div>
+  {{/autoForm}}
+  {{/if}}
+</template>
+
+
+<template name="afArrayField_publish">
+  <div class="form-group{{#if afFieldIsInvalid name=this.atts.name}} has-error{{/if}}">
+    <label {{afFieldLabelAtts}}>{{afFieldLabelText name=this.atts.name}}</label>
+    <div class="{{rightColumnClass}}">
+      <div class="panel autoform-padding-fix">
+        {{#if afFieldIsInvalid name=this.atts.name}}
+        <div class="panel-body has-error">
+          <span class="help-block">{{{afFieldMessage name=this.atts.name}}}</span>
+        </div>
+        {{/if}}
+        <ul class="list-group">
+          {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+          <li class="list-group-item autoform-array-item">
+	    <div class="media">
+	      {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
+	      <div class="media-left">
+		<button type="button" class="btn btn-default autoform-remove-item pull-left"><span class="glyphicon glyphicon-minus"></span></button>
+	      </div>
+	      {{/if}}
+	      <div class="media-body">
+		<div class="row">
+                  <div class="col-sm-3">{{> afQuickField name=portport template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-9"}}</div>
+                  <div class="col-sm-3">{{> afQuickField name=portprotocol template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-9"}}</div>
+                  <div class="col-sm-3">{{> afQuickField name=hostIp template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-9"}}</div>
+                  <div class="col-sm-3">{{> afQuickField name=hostPort template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-9"}}</div>
+		</div>
+	      </div>
+	    </div>
+          </li>
+          {{/afEachArrayItem}}
+          {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+          <li class="list-group-item">
+	    <button type="button" class="btn btn-default autoform-add-item" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="glyphicon glyphicon-plus"></span></button>
+          </li>
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="afArrayField_array">
+  <div class="form-group{{#if afFieldIsInvalid name=this.atts.name}} has-error{{/if}}">
+    <label {{afFieldLabelAtts}}>{{afFieldLabelText name=this.atts.name}}</label>
+    <div class="{{rightColumnClass}}">
+      <div class="panel autoform-padding-fix">
+        {{#if afFieldIsInvalid name=this.atts.name}}
+        <div class="panel-body has-error">
+          <span class="help-block">{{{afFieldMessage name=this.atts.name}}}</span>
+        </div>
+        {{/if}}
+        <ul class="list-group">
+          {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+          <li class="list-group-item autoform-array-item">
+	    <div class="media">      
+	      {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
+	      <div class="media-left">
+		<button type="button" class="btn btn-default autoform-remove-item"><span class="glyphicon glyphicon-minus"></span></button>
+	      </div>
+	      {{/if}}
+	      <div class="media-body" style="width:100%">
+                {{> afQuickField name=this.name label=false}}
+	      </div>
+	    </div>
+          </li>
+          {{/afEachArrayItem}}
+          {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+          <li class="list-group-item">
+	    <button type="button" class="btn btn-default autoform-add-item" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="glyphicon glyphicon-plus"></span></button>
+          </li>
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="imagePullParameter">
+  <ol class="breadcrumb">
+    <li><a href="/">Images</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li class="active">Pull</li>
+  </ol>
+
+    {{#if isInRole 'image.pull'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.image.pull.actions'}}
+    </div>
+  </form>
+    {{> quickForm id="imagePull" doc=config schema="pullSchemas" type="method" meteormethod="image.pull" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Pull" }}
+    {{/if}}
+</template>
+
+<template name="imageTagParameter">
+  <ol class="breadcrumb">
+    <li><a href="/">Images</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li class="active">tag</li>
+  </ol>
+    {{#if isInRole 'image.tag'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.image.tag.actions'}}
+    </div>
+  </form>
+    {{> quickForm id="imageTag" doc=config schema="tagSchemas" type="method" meteormethod="image.tag" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Tag" }}
+    {{/if}}
+</template>
+
+
+<template name="imagePushParameter">
+  <ol class="breadcrumb">
+    <li><a href="/">Images</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li class="active">Push</li>
+  </ol>
+
+  {{#if isInRole 'image.push'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.image.push.actions'}}
+    </div>
+  </form>
+  {{> quickForm id="imagePush" doc=config schema="pushSchemas" type="method" meteormethod="image.push" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Push" }}
+  {{/if}}
+</template>
+
+
+<template name="imageModals">
+  {{#if isInRole 'image.rm'}}
+  <div class="modal fade" id="imageRemoveModal" tabindex="-1" role="dialog" aria-labelledby="Remove Option" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Remove options</h4>
+	</div>
+	<div class="modal-body">
+	  <form class="form-inline">
+	    <div class="btn-toolbar" role="toolbar" aria-label="...">
+	      {{> runHooks 'template.image.remove.actions'}}
+	    </div>
+	  </form>
+	  {{#autoForm id="imageRemoveForm" doc=config schema="imageRemoveSchemas" type="method" meteormethod="image.rm" template="bootstrap3-horizontal" class="form-horizontal"}}
+	  
+	  {{> afQuickField name='force' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
+	  {{> afQuickField name='noprune' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
+	  {{> afQuickField name='tag' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" options=removeTagOptions}}
+	  {{> afQuickField name='id' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
+	  {{> afQuickField name='host' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
+	  <div class="form-group">
+	    <div class="col-sm-offset-1 col-sm-11">
+	      <button type="submit" class="btn btn-primary">Remove</button>
+	    </div>
+	  </div>
+	  {{/autoForm}}
+	</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</template>

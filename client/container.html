@@ -1,0 +1,373 @@
+
+<template name="containers">
+  <form class="form-inline">
+    {{> hostFilter}}
+  </form>
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+	<tr>
+	  {{#if multihost}}<th>HOST</th>{{/if}}
+	  <th>NAMES</th>
+	  <th class="hidden-xs">CONTAINER ID</th>
+	  <th class="hidden-xs">IMAGE</th>
+	  <th class="hidden-xs">COMMAND</th>
+	  <th class="hidden-xs">CREATED</th>
+	  <th class="hidden-xs">STATUS</th>
+	  {{> runHooks 'template.container.table.extra.title'}}
+	</tr>
+      </thead>
+      <tbody>
+	{{#if isInRole 'container.list'}}
+	{{#each this}}
+	<tr>
+	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
+	  <td><a href="{{pathFor 'containersInspect' id=Id host=_host}}" title="{{NamesFull}}">{{Names}}</a></td>
+	  <td class="hidden-xs">{{IdShort}}</td>
+	  <td class="hidden-xs"><a href="{{pathFor 'imagesInspect' id=ImageId host=_host}}">{{Image}}</a></td>
+	  <td class="hidden-xs">{{Command}}</td>
+	  <td class="hidden-xs">{{Created}}</td>
+	  <td class="hidden-xs">{{Status}}</td>
+	  {{> runHooks 'template.container.table.extra.data'}}
+	  <td>
+	    {{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> start</span></button>{{/if}}{{/if}}
+	    {{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
+	    {{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
+	    {{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
+	    {{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
+	  </td>
+	</tr>
+	{{/each}}
+	{{/if}}
+      </tbody>
+    </table>
+  </div>
+  {{> containerModals }}
+</template>
+
+
+<template name="containerInspect">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'containers'}}">Containers</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li class="active">{{IdShort}}</li>
+  </ol>
+
+  {{#if isInRole 'container.view'}}
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="btn-toolbar" role="toolbar" aria-label="...">
+	<div class="pull-right">
+	  {{#if State.Running}}<span class="label label-success">Running</span>{{/if}}
+	  {{#unless State.Running}}<span class="label label-default">Stopped</span>{{/unless}}
+	  {{#if State.Restarting}}<span class="label label-warning">Restarting</span>{{/if}}
+	  {{#if State.Paused}}<span class="label label-warning">Paused</span>{{/if}}
+	</div>
+
+	{{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Start</span></button>{{/if}}{{/if}}
+	{{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
+	{{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
+	{{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
+	{{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
+	{{#if canKill}}{{#if isInRole 'container.kill'}}<button id="bkill" type="button" class="btn btn-default"><span class="glyphicon glyphicon-flash red"></span><span class="hidden-xs"> kill</span></button>{{/if}}{{/if}}
+	{{#if canRemove}}{{#if isInRole 'container.rm'}}<button id="brm" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash red"></span><span class="hidden-xs"> remove</span></button>{{/if}}{{/if}}
+	{{#if isInRole 'container.commit'}}<a href="{{pathFor 'containerCommit' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-camera"></span><span class="hidden-xs"> commit</span></a>{{/if}}
+	{{#if ensureApi _host '1.17'}}{{#if isInRole 'container.rename'}}<a href="{{pathFor 'containerRename' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> rename</span></a>{{/if}}{{/if}}
+{{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> copy</span></a>{{/if}} --}}
+
+	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> exec create</span></a>{{/if}}{{/if}}
+
+      </div>
+
+      <div class="row">
+	<div class="col-md-4">Name: {{Name}}</div>
+	<div class="col-md-8">Command: {{command}}</div>
+      </div>
+
+      <div class="row">
+	<div class="col-md-1">Ports:</div>
+	<div class="col-md-11">{{ExposedPorts}}</div>
+      </div>
+      <div class="row">
+	<div class="col-md-1">Links:</div>
+	<div class="col-md-11">{{Links}}</div>
+      </div>
+      <div class="row">
+	<div class="col-md-1">Volumes:</div>
+	<div class="col-md-11">{{Binds}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-target="#containerConfig" aria-expanded="false" aria-controls="containerConfig">
+      <h3 class="panel-title">Config</h3>
+    </div>
+    <div id="containerConfig" class="panel-body collapse">
+	<table class="table table-condensed table-striped">
+	  <tbody>
+	    {{#each configs}}
+	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-target="#containerNetworkSettings" aria-expanded="false" aria-controls="containerNetworkSettings">
+      <h3 class="panel-title">Network Settings</h3>
+    </div>
+    <div id="containerNetworkSettings" class="panel-body collapse">
+	<table class="table table-condensed table-striped">
+	  <tbody>
+	    {{#each networkSettings}}
+	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+    </div>
+  </div>
+
+  
+  {{#if top}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Top</h3>
+    </div>
+    <div class="panel-body">
+      <div class="table-responsive">
+
+	<table class="table table-condensed table-striped">
+	  <thead>
+	    <tr>
+	      {{#each top.Titles}}
+	      <th>{{this}}</th>
+	      {{/each}}
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {{#each top.Processes}}
+	    <tr>
+	      {{#each this}}
+	      <td>{{this}}</td>
+	      {{/each}}
+	    </tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if changes}}
+  <div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-target="#containerChanges" aria-expanded="false" aria-controls="containerChanges">
+      <h3 class="panel-title">Changes</h3>
+    </div>
+    <div id="containerChanges" class="panel-body  collapse">
+      <div class="table-responsive">
+
+	<table class="table table-condensed table-striped">
+	  <thead>
+	    <tr>
+	      <th></th>
+	      <th>Path</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {{#each changes}}
+	    <tr>
+	      <td>{{Kind}}</td>
+	      <td>{{Path}}</td>
+	    </tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+
+  {{#if logs}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Logs</h3>
+    </div>
+    <div class="panel-body">
+      <pre>{{logs}}</pre>
+    </div>
+  </div>
+  {{/if}}
+  {{> containerModals }}
+  {{/if}}
+</template>
+
+
+<template name="containerModals">
+  {{#if isInRole 'container.rm'}}
+  <div class="modal fade" id="containerRemoveModal" tabindex="-1" role="dialog" aria-labelledby="Remove Option" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Remove options</h4>
+	</div>
+	<div class="modal-body">
+	  <form class="form-inline">
+	    <div class="btn-toolbar" role="toolbar" aria-label="...">
+	      {{> runHooks 'template.container.remove.actions'}}
+	    </div>
+	  </form>
+	  {{> quickForm id="containerRemoveForm" doc=configRemove schema="containerRemoveSchemas" type="method" meteormethod="container.rm" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Remove" }}
+	</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if isInRole 'container.stop'}}
+  <div class="modal fade" id="containerStopModal" tabindex="-1" role="dialog" aria-labelledby="Stop Option" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Stop option</h4>
+	</div>
+	<div class="modal-body">
+	  <form class="form-inline">
+	    <div class="btn-toolbar" role="toolbar" aria-label="...">
+	      {{> runHooks 'template.container.stop.actions'}}
+	    </div>
+	  </form>
+	  {{> quickForm id="containerStopForm" doc=configStop schema="containerStopSchemas" type="method" meteormethod="container.stop" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Stop" }}
+	</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if isInRole 'container.start'}}
+  <div class="modal fade" id="containerStartModal" tabindex="-1" role="dialog" aria-labelledby="Start Option" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Start options</h4>
+	</div>
+	<div class="modal-body">
+	  <form class="form-inline">
+	    <div class="btn-toolbar" role="toolbar" aria-label="...">
+	      {{> runHooks 'template.container.start.actions'}}
+	    </div>
+	  </form>
+	  {{> quickForm id="containerStartForm" schema="containerStartSchemas" type="method" meteormethod="container.start" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Start" }}
+	</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if isInRole 'container.restart'}}
+  <div class="modal fade" id="containerRestartModal" tabindex="-1" role="dialog" aria-labelledby="Restart Option" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Restart options</h4>
+	</div>
+	<div class="modal-body">
+	  <form class="form-inline">
+	    <div class="btn-toolbar" role="toolbar" aria-label="...">
+	      {{> runHooks 'template.container.restart.actions'}}
+	    </div>
+	  </form>
+	  {{> quickForm id="containerRestartForm" schema="containerStopSchemas" type="method" meteormethod="container.restart" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Start" }}
+	</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+
+  {{#if isInRole 'container.kill'}}
+  <div class="modal fade" id="containerKillModal" tabindex="-1" role="dialog" aria-labelledby="Kill Option" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Kill options</h4>
+	</div>
+	<div class="modal-body">
+	  <form class="form-inline">
+	    <div class="btn-toolbar" role="toolbar" aria-label="...">
+	      {{> runHooks 'template.container.kill.actions'}}
+	    </div>
+	  </form>
+	  {{> quickForm id="containerKillForm" schema="containerKillSchemas" type="method" meteormethod="container.kill" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Kill" }}
+	</div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+</template>
+
+
+<template name="containerCommit">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'containers'}}">Containers</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'containersInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li class="active">commit</li>
+  </ol>
+
+  {{#if isInRole 'container.commit'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.container.commit.actions'}}
+    </div>
+  </form>
+  {{> quickForm id="containerCommit" schema="commitSchemas" type="method" doc=config meteormethod="container.commit" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Commit" }}
+  {{/if}}
+</template>
+
+<template name="containerRename">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'containers'}}">Containers</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'containersInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li class="active">rename</li>
+  </ol>
+
+  {{#if isInRole 'container.rename'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.container.rename.actions'}}
+    </div>
+  </form>
+  {{> quickForm id="containerRenameForm" schema="containerRenameSchemas" type="method" doc=config meteormethod="container.rename" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Rename" }}
+  {{/if}}
+</template>
+
+
+<template name="containerExecCreate">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'containers'}}">Containers</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'containersInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li>exec</li>
+    <li class="active">create</li>
+  </ol>
+
+  {{#if isInRole 'exec.create'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.container.exec.create.actions'}}
+    </div>
+  </form>
+  {{> quickForm id="containerExecCreateForm" schema="containerExecCreateSchemas" type="method" doc=config meteormethod="container.exec.create" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Exec Create" }}
+  {{/if}}
+</template>
