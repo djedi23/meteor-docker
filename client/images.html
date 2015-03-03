@@ -192,6 +192,13 @@
     <div class="col-sm-6">{{> afQuickField name="Memory" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
     <div class="col-sm-6">{{> afQuickField name="MemorySwap" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
   </div>
+
+  <div class="row">
+    <label class="col-sm-1 control-label">Restart Policy</label>
+    <div class="col-sm-5">{{> afQuickField name="RestartPolicy.Name" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+    <div class="col-sm-6">{{> afQuickField name="RestartPolicy.MaximumRetryCount" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+  </div>
+
   
   <div class="form-group">
     <div class="col-sm-offset-1 col-sm-11">

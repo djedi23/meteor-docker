@@ -601,6 +601,7 @@ Meteor.methods({
 	    
 	    copyIfExists(params,create_options.HostConfig, 'PublishAllPorts');
             copyIfExists(params,create_options.HostConfig, 'Binds');
+            copyIfExists(params,create_options.HostConfig, 'RestartPolicy');
 	    
             console.log('co',JSON.stringify(create_options));
             var start_options = {};
