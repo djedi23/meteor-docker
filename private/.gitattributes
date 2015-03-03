@@ -1,1 +1,4 @@
 version.json filter=dtcversion
+
+# git config filter.dtcversion.smudge ./private/.version_smudge.sh
+# git config filter.dtcversion.clean ./private/.version_clean.sh
