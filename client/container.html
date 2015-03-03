@@ -107,7 +107,7 @@
 	<table class="table table-condensed table-striped">
 	  <tbody>
 	    {{#each configs}}
-	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
+	    <tr><td>{{n}}</td><td>{{#if link}}<a href="{{link}}">{{p}}</a>{{/if}}{{#unless link}}{{p}}{{/unless}}</td></tr>
 	    {{/each}}
 	  </tbody>
 	</table>

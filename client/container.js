@@ -1,3 +1,4 @@
+
 Template.containers.helpers({
     ImageId: function(){
         var image = Images.findOne({RepoTags:this.Image});
@@ -189,19 +190,21 @@ Template.containerInspect.helpers({
         return this._host;
     },
     configs: function(){
+        var hostId = this._host;
 	if (this.Config){
 	    return _.map(_.pairs(this.Config),
 			 function(c){
-			     return {n:c[0],p:EJSON.stringify(c[1])};
+			     return filter_content(hostId, {n:c[0],p:c[1]});
 			 });
 	}
 	return null;
     },
     networkSettings: function(){
+        var hostId = this._host;
 	if (this.NetworkSettings){
 	    return _.map(_.pairs(this.NetworkSettings),
 			 function(c){
-			     return {n:c[0],p:EJSON.stringify(c[1])};
+			     return filter_content(hostId, {n:c[0],p:c[1]});
 			 });
 	}
 	return null;

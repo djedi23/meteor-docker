@@ -26,26 +26,6 @@
   {{/unless}}
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Info</h3>
-    </div>
-    <div class="panel-body">
-      <div class="row">
-	<div class="col-md-4">Images: <a href="{{pathFor 'images'}}">{{info.Images}}</a></div>
-	<div class="col-md-4">Containers: <a href="{{pathFor 'containers'}}">{{info.Containers}}</a></div>
-	<div class="col-md-4">Debug: {{info.Debug}}</div>
-      </div>
-      	<table class="table table-condensed table-striped">
-	  <tbody>
-	    {{#each infos}}
-	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
-	    {{/each}}
-	  </tbody>
-	</table>
-    </div>
-  </div>
-  
-  <div class="panel panel-default">
-    <div class="panel-heading">
       <h3 class="panel-title">Version</h3>
     </div>
     <div class="panel-body">
@@ -64,6 +44,26 @@
       </div>
     </div>
   </div>
-  {{/each}}
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Info</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+	<div class="col-md-4">Images: <a href="{{pathFor 'images'}}">{{info.Images}}</a></div>
+	<div class="col-md-4">Containers: <a href="{{pathFor 'containers'}}">{{info.Containers}}</a></div>
+	<div class="col-md-4">Debug: {{info.Debug}}</div>
+      </div>
+      	<table class="table table-condensed table-striped">
+	  <tbody>
+	    {{#each infos}}
+	    <tr><td>{{n}}</td><td>{{#if link}}<a href="{{link}}">{{p}}</a>{{/if}}{{#unless link}}{{p}}{{/unless}}</td></tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+    </div>
+  </div>
+    {{/each}}
   {{/if}}
 </template>

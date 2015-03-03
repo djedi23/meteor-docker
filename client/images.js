@@ -68,9 +68,10 @@ Template.imageInspect.helpers({
     },
     configs: function(){
 	if (this.Config){
+	    var hostId = this._host;
 	    return _.map(_.pairs(this.Config),
 			 function(c){
-			     return {n:c[0],p: EJSON.stringify(c[1])};
+			     return filter_content(hostId, {n:c[0],p: c[1]});
 			 });
 	}
 	return null;
@@ -82,7 +83,13 @@ Template.imageInspect.helpers({
 	return null;
     },
     host: function() {
-	return this._host;
+	if (this._host)
+	    return this._host;
+
+	// We are in the history
+	if (Template.parentData(1))
+	    return Template.parentData(1)._host;
+	return null;
     }
 });
 

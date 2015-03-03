@@ -86,14 +86,16 @@ containerDetails = function(hostId, containerId){
 
                           container._host = hostId;
                           var v = {};
-                          _.each(_.pairs(container.Volumes),
-                                 function(p){
-                                     p[0] = p[0].replace('.','U+FF0E');
-                                     v[p[0]] = p[1];
-                                 });
+                          if (container.Volumes)
+                              _.each(_.pairs(container.Volumes),
+                                  function(p){
+                                      p[0] = p[0].replace('.','U+FF0E');
+                                      v[p[0]] = p[1];
+                                  });
                           container.Volumes = v;
 
                           v = {};
+                          if (container.VolumesRW)
                           _.each(_.pairs(container.VolumesRW),
                                  function(p){
                                      p[0] = p[0].replace('.','U+FF0E');
@@ -430,12 +432,12 @@ Meteor.methods({
 	    docker.version(Meteor.bindEnvironment(function (err, version) {
                                if (err)
 		                   return;
-                               var u = modules.collections.Hosts.update({Id:hostId}, {$set: {version:version}}, {validate:false, filter: false});
+                               modules.collections.Hosts.update({_id:hostId}, {$set: {version:version}}, {validate:false, filter: false});
 	                   }));
 	    docker.info(Meteor.bindEnvironment(function (err, info) {
                             if (err)
 		                return;
-                            var u = modules.collections.Hosts.update({Id:hostId}, {$set: {info:info}}, {validate:false, filter: false});
+                            modules.collections.Hosts.update({_id:hostId}, {$set: {info:info}}, {validate:false, filter: false});
 	                }));
         });
     },
