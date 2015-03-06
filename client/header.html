@@ -18,6 +18,7 @@
         <li class="{{isImages}}"><a href="{{pathFor 'images'}}">Images</a></li>
         <li class="{{isContainers}}"><a href="{{pathFor 'containers'}}">Container</a></li>
         <li class="{{isHost}}"><a href="{{pathFor 'host'}}">Host {{#if errors}}<span class="label label-danger">error</span>{{/if}}</a></li>
+	{{> runHooks 'template.navbar.left.actions'}}
       </ul>
       <ul class="nav navbar-nav navbar-right">
 	{{> runHooks 'template.navbar.right.actions'}}
