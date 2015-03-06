@@ -43,7 +43,7 @@ listContainers = function(sinceId){
                                   Containers.remove({Id:{$in:_.keys(list)}});
 			          ContainersInspect.remove({Id:{$in:_.keys(list)}});
 	                      }));
-    })
+    });
 };
 
 dtcVersion =  function(){

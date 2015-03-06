@@ -30,11 +30,11 @@
 	  <td class="hidden-xs">{{Status}}</td>
 	  {{> runHooks 'template.container.table.extra.data'}}
 	  <td>
-	    {{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> start</span></button>{{/if}}{{/if}}
-	    {{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
-	    {{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
-	    {{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
-	    {{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
+	    {{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> start</span></button>{{/if}}{{/if}}
+	    {{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
+	    {{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
+	    {{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
+	    {{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
 	  </td>
 	</tr>
 	{{/each}}
@@ -64,18 +64,18 @@
 	  {{#if State.Paused}}<span class="label label-warning">Paused</span>{{/if}}
 	</div>
 
-	{{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Start</span></button>{{/if}}{{/if}}
-	{{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
-	{{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
-	{{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
-	{{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
-	{{#if canKill}}{{#if isInRole 'container.kill'}}<button id="bkill" type="button" class="btn btn-default"><span class="glyphicon glyphicon-flash red"></span><span class="hidden-xs"> kill</span></button>{{/if}}{{/if}}
-	{{#if canRemove}}{{#if isInRole 'container.rm'}}<button id="brm" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash red"></span><span class="hidden-xs"> remove</span></button>{{/if}}{{/if}}
-	{{#if isInRole 'container.commit'}}<a href="{{pathFor 'containerCommit' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-camera"></span><span class="hidden-xs"> commit</span></a>{{/if}}
-	{{#if ensureApi _host '1.17'}}{{#if isInRole 'container.rename'}}<a href="{{pathFor 'containerRename' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> rename</span></a>{{/if}}{{/if}}
-{{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> copy</span></a>{{/if}} --}}
+	{{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Start</span></button>{{/if}}{{/if}}
+	{{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
+	{{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
+	{{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
+	{{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
+	{{#if canKill}}{{#if isInRole 'container.kill'}}<button id="bkill" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-flash red"></span><span class="hidden-xs"> kill</span></button>{{/if}}{{/if}}
+	{{#if canRemove}}{{#if isInRole 'container.rm'}}<button id="brm" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-trash red"></span><span class="hidden-xs"> remove</span></button>{{/if}}{{/if}}
+	{{#if isInRole 'container.commit'}}<a href="{{pathFor 'containerCommit' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-camera"></span><span class="hidden-xs"> commit</span></a>{{/if}}
+	{{#if ensureApi _host '1.17'}}{{#if isInRole 'container.rename'}}<a href="{{pathFor 'containerRename' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> rename</span></a>{{/if}}{{/if}}
+{{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> copy</span></a>{{/if}} --}}
 
-	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> exec create</span></a>{{/if}}{{/if}}
+	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> exec create</span></a>{{/if}}{{/if}}
 
       </div>
 

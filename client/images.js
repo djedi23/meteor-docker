@@ -29,6 +29,12 @@ Template.images.helpers({
 	    return host.Id;
 	return null;
     },
+    hostInvalid: function() {
+	var host =  Hosts.findOne(this._host);
+	if (host && host.status)
+	    return host.status===true?null:true;
+	return true;
+    },
     progress: function(){
 	if (this.progressDetail && this.progressDetail.current && this.progressDetail.total)
 	    return Math.round((this.progressDetail.current / this.progressDetail.total) *100);
@@ -81,6 +87,12 @@ Template.imageInspect.helpers({
 	if (host)
 	    return host.Id;
 	return null;
+    },
+    hostInvalid: function() {
+	var host =  Hosts.findOne(this._host);
+	if (host && host.status)
+	    return host.status===true?null:true;
+	return true;
     },
     host: function() {
 	if (this._host)

@@ -35,6 +35,12 @@ Template.containers.helpers({
             return host.Id;
         return null;
     },
+    hostInvalid: function() {
+	var host =  Hosts.findOne(this._host);
+	if (host && host.status)
+	    return host.status===true?null:true;
+	return true;
+    },
     VirtualSize: function(){
         if (this.VirtualSize)
             return filesize(this.VirtualSize);
@@ -179,6 +185,12 @@ Template.containerInspect.helpers({
     },
     multihost: function() {
         return Hosts.find().count() > 1;
+    },
+    hostInvalid: function() {
+	var host =  Hosts.findOne(this._host);
+	if (host && host.status)
+	    return host.status===true?null:true;
+	return true;
     },
     hostId: function() {
         var host =  Hosts.findOne(this._host);
