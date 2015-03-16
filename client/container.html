@@ -1,7 +1,7 @@
 
 <template name="containers">
   <form class="form-inline">
-    {{> hostFilter}}
+    {{> hostFilter}}{{> containerFilter}}{{> containerImgFilter}}
   </form>
   <div class="table-responsive">
     <table class="table table-condensed table-striped">
@@ -370,4 +370,11 @@
   </form>
   {{> quickForm id="containerExecCreateForm" schema="containerExecCreateSchemas" type="method" doc=config meteormethod="container.exec.create" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Exec Create" }}
   {{/if}}
+</template>
+
+<template name="containerFilter">
+<input class="form-control" value="{{value}}" placeholder="Filter by Name"/>
+</template>
+<template name="containerImgFilter">
+<input class="form-control" value="{{value}}" placeholder="Filter by Image"/>
 </template>

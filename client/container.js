@@ -375,3 +375,37 @@ Template.containerModals.helpers({
 	return config;
     }
 });
+
+Template.containerFilter.helpers({
+    value: function(){
+	return Session.get('containerFilter');
+    }
+});
+Template.containerFilter.events({
+    'change, keydown, keyup, keypress': function(evt, tpl){
+	var val = tpl.$('input').val().trim();
+	if (!Session.equals('containerFilter',val))
+	    Session.set('containerFilter', val);
+	if (evt.keyCode === 13){
+	    evt.preventDefault();
+	    evt.stopPropagation();
+	}
+    }
+});
+
+Template.containerImgFilter.helpers({
+    value: function(){
+	return Session.get('containerImgFilter');
+    }
+});
+Template.containerImgFilter.events({
+    'change, keydown, keyup, keypress': function(evt, tpl){
+	var val = tpl.$('input').val().trim();
+	if (!Session.equals('containerImgFilter',val))
+	    Session.set('containerImgFilter', val);
+	if (evt.keyCode === 13){
+	    evt.preventDefault();
+	    evt.stopPropagation();
+	}
+    }
+});
