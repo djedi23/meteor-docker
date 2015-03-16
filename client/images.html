@@ -5,7 +5,7 @@
 	{{#if isInRole 'image.pull'}}<a href="{{pathFor 'imagePull'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span><span class="hidden-xs"> pull</span></a>{{/if}}
     </div>
     <div class="row">
-    {{> hostFilter}}
+    {{> hostFilter}}{{> imageFilter}}
     </div>
   </form>
   <div class="table-responsive">
@@ -374,4 +374,9 @@
     </div>
   </div>
   {{/if}}
+</template>
+
+
+<template name="imageFilter">
+<input class="form-control" value="{{value}}" placeholder="Filter by Tag"/>
 </template>

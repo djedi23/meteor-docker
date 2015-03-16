@@ -289,3 +289,20 @@ Template.imageModals.helpers({
 	return config;
     }
 });
+
+Template.imageFilter.helpers({
+    value: function(){
+	return Session.get('imageFilter');
+    }
+});
+Template.imageFilter.events({
+    'change, keydown, keyup, keypress': function(evt, tpl){
+	var val = tpl.$('input').val().trim();
+	if (!Session.equals('imageFilter',val))
+	    Session.set('imageFilter', val);
+	if (evt.keyCode === 13){
+	    evt.preventDefault();
+	    evt.stopPropagation();
+	}
+    }
+});
