@@ -476,6 +476,22 @@ Meteor.methods({
             throw new Meteor.Error(500, "Host name already exists");
 	Hosts.update({_id:host._id},{$set: {Id: host.Id}}, {validate:false, filter:false});
     },
+    'host.enable':function(hostId,a,b){
+        check(a,Match.Any);
+        check(b,Match.Any);
+	check(hostId, checkHostId);
+	if (hostId === null)
+	    return;
+        if (! Roles.userIsInRole(Meteor.user(), ['admin','host.enable']))
+            throw new Meteor.Error(403, "Not authorized to rename host");
+	var host = Hosts.findOne({_id:hostId});
+	if (host) {
+	    if (host.disabled)
+		Hosts.update({_id:hostId},{$unset: {disabled: ""}}, {validate:false, filter:false});
+	    else
+		Hosts.update({_id:hostId},{$set: {disabled: 'disabled'}}, {validate:false, filter:false});
+	}
+    },
     'images.list': function(){
         if (! Roles.userIsInRole(Meteor.user(), ['admin','image.list']))
             throw new Meteor.Error(403, "Not authorized to list images");

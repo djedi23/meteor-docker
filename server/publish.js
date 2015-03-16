@@ -1,18 +1,28 @@
 
+hostEnabled = function() {
+    return Hosts.find({disabled: 'disabled'}).map(function(h){
+	return h._id;
+    });
+};
+
+hostEnabledCriteria = function() {
+    return {_host: {$not: {$in: hostEnabled()}}};
+};
+
 Meteor.publish("images", function(){
     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','image.list']))
         return null;
-    return Images.find();
+    return Images.find(hostEnabledCriteria());
 });
 
 
 Meteor.publish("containers", function(){
     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','container.list']))
         return null;
-    var containers =  Containers.find();
+    var containers =  Containers.find(hostEnabledCriteria());
     
     return [containers,
-            Images.find()];
+            Images.find(hostEnabledCriteria())];
 });
 
 
