@@ -164,6 +164,8 @@ imageDetail = function(hostId, imgId){
 		                image.tags = img.RepoTags;
                             
                             image._host = hostId;
+                            if (image._id)
+                                delete image._id;
                             var u = ImagesInspect.upsert({_host:hostId,Id:image.Id}, {$set: image});
 	                }));
 	    img.history(Meteor.bindEnvironment(function (err, history) {
