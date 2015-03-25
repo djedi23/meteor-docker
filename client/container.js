@@ -1,7 +1,7 @@
 
 Template.containers.helpers({
     ImageId: function(){
-        var image = Images.findOne({RepoTags:this.Image});
+        var image = Images.findOne({_host:this._host, RepoTags:this.Image});
         if (image)
             return image.Id;
         return undefined;
