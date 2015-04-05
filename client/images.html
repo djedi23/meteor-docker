@@ -5,7 +5,7 @@
 	{{#if isInRole 'image.pull'}}<a href="{{pathFor 'imagePull'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span><span class="hidden-xs"> pull</span></a>{{/if}}
     </div>
     <div class="row">
-    {{> hostFilter}}{{> imageFilter}}
+    {{> hostFilter}}{{> imageFilter}}{{> runHooks 'template.images.actions'}}
     </div>
   </form>
   <div class="table-responsive">

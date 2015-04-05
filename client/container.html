@@ -1,7 +1,7 @@
 
 <template name="containers">
   <form class="form-inline">
-    {{> hostFilter}}{{> containerFilter}}{{> containerImgFilter}}
+    {{> hostFilter}}{{> containerFilter}}{{> containerImgFilter}}{{> runHooks 'template.containers.actions'}}
   </form>
   <div class="table-responsive">
     <table class="table table-condensed table-striped">
@@ -76,7 +76,6 @@
 {{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> copy</span></a>{{/if}} --}}
 
 	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> exec create</span></a>{{/if}}{{/if}}
-
       </div>
 
       <div class="row">
@@ -98,6 +97,8 @@
       </div>
     </div>
   </div>
+
+  {{> runHooks "template.container.inspects.infos"}}
 
   <div class="panel panel-default">
     <div class="panel-heading" data-toggle="collapse" data-target="#containerConfig" aria-expanded="false" aria-controls="containerConfig">
