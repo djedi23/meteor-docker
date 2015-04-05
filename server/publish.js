@@ -41,7 +41,9 @@ Meteor.publish("containerInspect", function(hostId, containerId){
     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','container.view']))
         return null;
 
-    return ContainersInspect.find({_host:hostId, Id:containerId});
+  return [ContainersInspect.find({_host:hostId, Id:containerId}),
+	  ContainersStats.find({_host:hostId, Id:containerId},{sort: {read: -1}, limit:60})
+	 ];
 });
 
 Meteor.publish("hosts", function(){

@@ -1,5 +1,9 @@
 // mode: js2 ; org-default-notes-file: "../docs/docker.org"
 
+// Hold the streams for the containers stats
+containerStats = {};
+
+
 checkDockerId = Match.Where(function(x){
                   check(x,String);
                   return /^[0-9a-z]{64}$/.test(x);
@@ -279,6 +283,7 @@ Meteor.methods({
             var u = ContainersInspect.update({_host:hostId,Id:containerId}, {$set: changes_});
           }
         }));
+      startMonitoringContainer(hostId,containerId);
     }
   },
   'containers.list': function(){

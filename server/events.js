@@ -22,6 +22,7 @@ eventHandle = function(host, event){
     case 'unpause':
     containerDetails(host, event.id);
     listContainers();
+    startMonitoringContainer(host, event.id);
     break;
     case 'untag':
     listImages();
