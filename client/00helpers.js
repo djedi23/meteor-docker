@@ -1,7 +1,7 @@
 
 
 Template.registerHelper('ensureApi', function(hostId, api) {
-    var host = Hosts.findOne({Id:hostId});
+    var host = Hosts.findOne({_id:hostId});
     if (host){
 	return host.version.ApiVersion >= api;
     }
