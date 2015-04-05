@@ -51,31 +51,30 @@ docker_init = function(hostId) {
 
 
 Meteor.startup(function () {
-    docker = {};
+  docker = {};
+ 
+  if (modules.collections.Hosts.find().count()===0){
+    var fs = Npm.require('fs');
+    var socket = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
+    var stats  = fs.statSync(socket);
 
-    if (modules.collections.Hosts.find().count()===0){
-        var fs = Npm.require('fs');
-        var socket = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
-        var stats  = fs.statSync(socket);
-
-        if (!stats.isSocket()) {
-            throw new Error("Are you sure the docker is running?");
-        }
-        var hostOptions = {Id:'localSocket',
-                           connection: {socketPath: socket}};
-        modules.collections.Hosts.upsert({Id:'localSocket'}, hostOptions, {validate:false, filter: false});
+    if (!stats.isSocket()) {
+      throw new Error("Are you sure the docker is running?");
     }
+    var hostOptions = {Id:'localSocket',
+      connection: {socketPath: socket}};
+    modules.collections.Hosts.upsert({Id:'localSocket'}, hostOptions, {validate:false, filter: false});
+  }
 
-    modules.collections.Hosts.find().forEach(function(e){
-        if (e.connection)
-            docker_init(e._id);
-    });
+  modules.collections.Hosts.find().forEach(function(e){
+    if (e.connection)
+      docker_init(e._id);
+  });
 
+  Accounts.onCreateUser(function(options, user) {
+    if (Meteor.users.find().count() === 0)
+      user.roles=_.map(modules.rolesList, function(e){return e.role;});
 
-    Accounts.onCreateUser(function(options, user) {
-        if (Meteor.users.find().count() === 0)
-            user.roles=_.map(modules.rolesList, function(e){return e.role;});
-
-        return user;
-    });
+    return user;
+  });
 });

@@ -1,17 +1,17 @@
 
 eventHandle = function(host, event){
-    // event export
-    switch(event.status){
+  // event export
+  switch(event.status){
     case 'destroy':
-        Containers.remove({_host: host, Id:event.id});
-        ContainersInspect.remove({_host: host,Id:event.id});
-        break;
+    Containers.remove({_host: host, Id:event.id});
+    ContainersInspect.remove({_host: host,Id:event.id});
+    break;
     case 'delete':
-        if (event.id){
-            Images.remove({_host: host, Id:event.id});
-            ImagesInspect.remove({_host: host, Id:event.id});
-        }
-        break;
+    if (event.id){
+      Images.remove({_host: host, Id:event.id});
+      ImagesInspect.remove({_host: host, Id:event.id});
+    }
+    break;
     case 'create':
     case 'die':
     case 'pause':
@@ -20,12 +20,12 @@ eventHandle = function(host, event){
     case 'start':
     case 'stop':
     case 'unpause':
-        containerDetails(host, event.id);
-        listContainers();
-        break;
-        case 'untag':
-        listImages();
-        imageDetail(host, event.id);
-        break;
-    }
+    containerDetails(host, event.id);
+    listContainers();
+    break;
+    case 'untag':
+    listImages();
+    imageDetail(host, event.id);
+    break;
+  }
 };
