@@ -47,3 +47,28 @@ startMonitoringContainers = function(){
     startMonitoringContainer(container._host,container.Id);
   });
 };
+
+
+// Clean old stats
+SyncedCron.add({
+  name: 'Clean old stats',
+  schedule: function(parser) {
+    return parser.text('every 2 hours');
+  },
+  job: function() {
+    var query = {read: {$lt: moment().subtract(1, 'days').toDate()}};
+    var stats = ContainersStats.find(query);
+    ContainersStats.remove(query)
+    return stats.count();
+  }
+});
+
+
+SyncedCron.config({
+  log:false
+});
+
+
+Meteor.startup(function(){
+  SyncedCron.start();
+});

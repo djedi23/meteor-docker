@@ -27,3 +27,4 @@ accounts-ui
 service-configuration
 reactive-var
 
+percolate:synced-cron
