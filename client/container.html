@@ -95,6 +95,12 @@
 	<div class="col-md-1">Volumes:</div>
 	<div class="col-md-11">{{Binds}}</div>
       </div>
+      {{#if ensureApi _host '1.18'}}
+      <div class="row">
+	<div class="col-md-1">Labels:</div>
+	<div class="col-md-11">{{Labels}}</div>
+      </div>
+    {{/if}}
     </div>
   </div>
 
