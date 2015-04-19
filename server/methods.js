@@ -452,6 +452,13 @@ Meteor.methods({
       docker.info(Meteor.bindEnvironment(function (err, info) {
                     if (err)
                       return;
+                    if (! _.isUndefined(info.RegistryConfig.IndexConfigs)){
+                      _.each(_.pairs(info.RegistryConfig.IndexConfigs), function(index){
+                        if (index[0].indexOf('.') !== -1){
+                          info.RegistryConfig.IndexConfigs[index[0].replace('.','_','g')] = index[1];
+                          delete info.RegistryConfig.IndexConfigs[index[0]];
+                        }});}
+
                     modules.collections.Hosts.update({_id:hostId}, {$set: {info:info}}, {validate:false, filter: false});
                   }));
     });
