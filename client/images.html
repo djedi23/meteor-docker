@@ -174,6 +174,11 @@
   <div class="row">
   {{> afQuickField name="links" template="links" label-class="col-sm-1" input-col-class="col-sm-11"}}
   </div>
+  {{#if ensureApi _host '1.18'}}
+  <div class="row">
+  {{> afQuickField name="Labels" template="labels" label-class="col-sm-1" input-col-class="col-sm-11"}}
+  </div>
+  {{/if}}
   <div class="row">
     <div class="col-sm-6">{{> afQuickField name="Binds" template="array" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
     <div class="col-sm-6">{{> afQuickField name="Envs" template="array" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>

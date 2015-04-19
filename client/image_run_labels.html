@@ -1,0 +1,38 @@
+<template name="afArrayField_labels">
+  <div class="form-group{{#if afFieldIsInvalid name=this.atts.name}} has-error{{/if}}">
+    <label {{afFieldLabelAtts}}>{{afFieldLabelText name=this.atts.name}}</label>
+    <div class="{{rightColumnClass}}">
+      <div class="panel autoform-padding-fix">
+        {{#if afFieldIsInvalid name=this.atts.name}}
+        <div class="panel-body has-error">
+          <span class="help-block">{{{afFieldMessage name=this.atts.name}}}</span>
+        </div>
+        {{/if}}
+        <ul class="list-group">
+          {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+          <li class="list-group-item autoform-array-item">
+	    <div class="media">
+	      {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
+	      <div class="media-left">
+		<button type="button" class="btn btn-default autoform-remove-item pull-left"><span class="glyphicon glyphicon-minus"></span></button>
+	      </div>
+	      {{/if}}
+	      <div class="media-body">
+		<div class="row">
+                  <div class="col-sm-6">{{> afQuickField name=key template="bootstrap3-horizontal" label-class="col-sm-4" input-col-class="col-sm-8"}}</div>
+                  <div class="col-sm-6">{{> afQuickField name=value template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
+		</div>
+	      </div>
+	    </div>
+          </li>
+          {{/afEachArrayItem}}
+          {{#if afArrayFieldHasLessThanMaximum name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
+          <li class="list-group-item">
+	    <button type="button" class="btn btn-default autoform-add-item" data-autoform-field="{{this.atts.name}}" data-autoform-minCount="{{this.atts.minCount}}" data-autoform-maxCount="{{this.atts.maxCount}}"><span class="glyphicon glyphicon-plus"></span></button>
+          </li>
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>

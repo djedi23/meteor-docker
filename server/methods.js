@@ -632,6 +632,11 @@ Meteor.methods({
           return l.container_name+':'+l.alias;
         });
 
+      if (ensureApi(params.host,'1.18')) {
+        create_options.Labels={};
+        _.each(params.Labels, function(label){ create_options.Labels[label.key] = label.value; });
+      }
+
       copyIfExists(params,create_options.HostConfig, 'PublishAllPorts');
       copyIfExists(params,create_options.HostConfig, 'Binds');
       copyIfExists(params,create_options.HostConfig, 'RestartPolicy');
@@ -641,7 +646,6 @@ Meteor.methods({
 
       Future = Npm.require('fibers/future');
       var myFuture = new Future();
-
       docker[params.host].run(params.id,command, [process.stdout, process.stderr], create_options,  start_options,
         function (err, result,container) {
         }).on('container',
