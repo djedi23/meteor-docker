@@ -532,7 +532,7 @@ Meteor.methods({
   'image.pull': function(params,a,b){
     check(params,pullSchemas);
     check(params.host, checkHostId);
-    check(a,Object);
+    check(a,Match.Any);
     check(b,Match.Any);
     if (! Roles.userIsInRole(Meteor.user(), ['admin','image.pull']))
       throw new Meteor.Error(403, "Not authorized to pull image");
@@ -559,6 +559,7 @@ Meteor.methods({
             })).on('end', Meteor.bindEnvironment(
               function(){
                 listImages();
+                modules.calls('events.image.pull.'+params.fromImage+'.'+params.tag, this, params.host, params);
               }));
         }));
   },
@@ -604,7 +605,7 @@ Meteor.methods({
     if (! Roles.userIsInRole(Meteor.user(), ['admin','image.run']))
       throw new Meteor.Error(403, "Not authorized to run image");
 
-    console.log('image.run',params);
+    //console.log('image.run',params);
     if (docker[params.host]){
       var command = [];
       if (params.command){
@@ -651,7 +652,7 @@ Meteor.methods({
         copyIfExists(params,create_options.HostConfig, 'Ulimits');
       }
 
-      console.log('co',JSON.stringify(create_options));
+      //console.log('co',JSON.stringify(create_options));
       var start_options = {};
 
       Future = Npm.require('fibers/future');
