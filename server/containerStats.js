@@ -23,11 +23,15 @@ startMonitoringContainer = function(hostId, containerId){
       containerStats[containerId] = {stream: stream, status:1};
       stream.on('data', Meteor.bindEnvironment(
         function(chunk){
-          var stat = JSON.parse(chunk);
-          stat.Id = containerId;
-          stat._host = hostId;
-          stat.read = moment(stat.read).toDate();
-          ContainersStats.insert(stat);
+          try{
+            var stat = JSON.parse(chunk);
+            stat.Id = containerId;
+            stat._host = hostId;
+            stat.read = moment(stat.read).toDate();
+            ContainersStats.insert(stat);
+          } catch(err){
+            console.log('error during stats: ', err);
+          }
         })).
         on('end', Meteor.bindEnvironment(function(){
                     delete containerStats[containerId];
