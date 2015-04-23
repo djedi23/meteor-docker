@@ -617,7 +617,7 @@ Meteor.methods({
       copyIfExists(params,create_options, 'name');
       copyIfExists(params,create_options, 'Tty');
       copyIfExists(params,create_options, 'User');
-      copyIfExists(params,create_options, 'Envs');
+      copyIfExists(params,create_options, 'Env');
       copyIfExists(params,create_options, 'WorkingDir');
       copyIfExists(params,create_options, 'Entrypoint');
       copyIfExists(params,create_options, 'AttachStderr');

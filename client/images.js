@@ -144,7 +144,7 @@ Template.imageRunParameter.helpers({
 	    config.AttachStdin = cf.AttachStdin;
 	    config.AttachStdout = cf.AttachStdout;
 	    config.Entrypoint = cf.Entrypoint;
-	    config.Envs = cf.Env;
+	    config.Env = cf.Env;
 	    config.Tty = cf.Tty;
 	    config.User = cf.User;
 	    config.WorkingDir = cf.WorkingDir;
