@@ -388,5 +388,12 @@
 
 
 <template name="imageFilter">
-<input class="form-control" value="{{value}}" placeholder="Filter by Tag"/>
+  <div class="form-group form-group-sm has-feedback">
+    {{#if value}}
+    <span class="filterClean glyphicon glyphicon-remove form-control-feedback"></span>
+    {{else}}
+    <span class="glyphicon glyphicon-filter form-control-feedback"></span>
+    {{/if}}
+    <input class="form-control" value="{{value}}" placeholder="Filter by Tag"/>
+  </div>
 </template>

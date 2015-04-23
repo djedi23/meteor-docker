@@ -23,3 +23,10 @@
 .white {
   color: white;
 }
+
+
+
+.filterClean {
+    pointer-events: initial;
+    cursor: pointer;
+}
