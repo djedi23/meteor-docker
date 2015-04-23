@@ -609,9 +609,9 @@ Meteor.methods({
     if (docker[params.host]){
       var command = [];
       if (params.command){
-        command = params.command;
+        command = [params.command];
         if (params.args)
-          command.concat(params.args);
+          command = command.concat(params.args);
       }
       var create_options = {};
       copyIfExists(params,create_options, 'name');
