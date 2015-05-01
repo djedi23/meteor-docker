@@ -28,4 +28,5 @@ service-configuration
 reactive-var
 
 percolate:synced-cron
+meteorhacks:sikka
 reywood:publish-composite
