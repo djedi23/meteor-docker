@@ -1,59 +1,80 @@
 
 hostEnabled = function() {
-    return Hosts.find({disabled: 'disabled'}).map(function(h){
-	return h._id;
-    });
+  return Hosts.find({disabled: 'disabled'}).map(function(h){
+	   return h._id;
+         });
 };
 
 hostEnabledCriteria = function() {
-    return {_host: {$not: {$in: hostEnabled()}}};
+  return {_host: {$not: {$in: hostEnabled()}}};
 };
 
-Meteor.publish("images", function(){
+Meteor.publishComposite("images", {
+  find:function(){
     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','image.list']))
-        return null;
+      return null;
     return Images.find(hostEnabledCriteria());
-});
+  }});
 
 
-Meteor.publish("containers", function(){
+Meteor.publishComposite ("containers", {
+  find:function(){
     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','container.list']))
-        return null;
+      return null;
     var containers =  Containers.find(hostEnabledCriteria());
     
-    return [containers,
-            Images.find(hostEnabledCriteria())];
+    return containers;
+  },
+  children: [
+    {
+      find: function(container){
+        return Images.find({_host:container._host, RepoTags:container.Image});
+      }
+    }
+  ]
 });
 
 
-Meteor.publish("imageInspect", function(hostId, imgId){
-    check(hostId, String);
-    check(imgId, checkDockerId);
-    if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','image.view']))
+Meteor.publishComposite("imageInspect", function(hostId, imgId){
+  return {
+    find: function() {
+      check(hostId, String);
+      check(imgId, checkDockerId);
+      if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','image.view']))
         return null;
 
-    return ImagesInspect.find({_host: hostId, Id:imgId});
-});
+      return ImagesInspect.find({_host: hostId, Id:imgId});
+    }}});
 
-Meteor.publish("containerInspect", function(hostId, containerId){
-    check(hostId, String);
-    check(containerId, checkDockerId);
-    if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','container.view']))
+Meteor.publishComposite("containerInspect", function(hostId, containerId){
+  return {
+    find: function(){
+      check(hostId, String);
+      check(containerId, checkDockerId);
+      if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','container.view']))
         return null;
+      
+      return ContainersInspect.find({_host:hostId, Id:containerId});
+    },
+    children: [
+      {
+        find: function(container) {
+          return ContainersStats.find({_host:container._host, Id:container.Id},{sort: {read: -1}, limit:60});
+        }
+      }
+    ]
+  }});
 
-  return [ContainersInspect.find({_host:hostId, Id:containerId}),
-	  ContainersStats.find({_host:hostId, Id:containerId},{sort: {read: -1}, limit:60})
-	 ];
-});
-
-Meteor.publish("hosts", function(){
+Meteor.publishComposite("hosts", {
+  find:function(){
     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','host.view']))
-        return null;
+      return null;
     return Hosts.find();
-});
+  }});
 
-Meteor.publish("hostsStatus", function(){
-//     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','host.view']))
-//         return null;
+Meteor.publishComposite("hostsStatus", {
+  find:function(){
+    //     if (! Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin','host.view']))
+    //         return null;
     return Hosts.find({},{fields:{status:1, Id:1, version:1}});
-});
+  }});

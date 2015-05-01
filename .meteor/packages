@@ -28,3 +28,4 @@ service-configuration
 reactive-var
 
 percolate:synced-cron
+reywood:publish-composite
