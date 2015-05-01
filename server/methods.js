@@ -255,9 +255,10 @@ Meteor.methods({
           var u = ContainersInspect.update({_host:hostId, Id:containerId}, {$set: image});
         }));
 
-      container.logs({stdout:1},Meteor.bindEnvironment(
+      container.logs({stdout:1, tail:200},Meteor.bindEnvironment(
         function (err, logsStream) {
           if (err){
+            console.log(err);
             ContainersInspect.update({_host:hostId,Id:containerId}, {$unset: {logs:""}});
             return;
           }
