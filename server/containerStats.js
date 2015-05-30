@@ -28,9 +28,9 @@ startMonitoringContainer = function(hostId, containerId){
             stat.Id = containerId;
             stat._host = hostId;
             stat.read = moment(stat.read).toDate();
-            ContainersStats.insert(stat);
+            ContainersStats.upsert({Id:stat.Id, _host: stat._host, read: stat.read}, stat);
           } catch(err){
-            console.log('error during stats: ', err);
+            console.log('error during stats: ', err, chunk.toString());
           }
         })).
         on('end', Meteor.bindEnvironment(function(){
