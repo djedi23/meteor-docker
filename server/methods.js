@@ -115,6 +115,16 @@ containerDetails = function(hostId, containerId){
                           });
                       container.VolumesRW = v;
 
+                      v = {};
+                      if (container.Config && container.Config.Volumes)
+                        _.each(_.pairs(container.Config.Volumes),
+                          function(p){
+                            p[0] = p[0].replace('.','U+FF0E');
+                            v[p[0]] = p[1];
+                          });
+                      container.Config.Volumes = v;
+
+
                       var u = ContainersInspect.upsert({_host:hostId, Id:container.Id}, {$set: container});
                     }));
 
