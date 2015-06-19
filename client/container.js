@@ -203,6 +203,9 @@ Template.containerInspect.helpers({
     }
     return '-';
   },
+  logs: function() {
+    return ansi_up.ansi_to_html(ansi_up.escape_for_html(this.logs));
+  },
   haveData: function () {
     return !(!this);
   },
