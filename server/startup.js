@@ -54,16 +54,23 @@ Meteor.startup(function () {
   docker = {};
  
   if (modules.collections.Hosts.find().count()===0){
-    var fs = Npm.require('fs');
-    var socket = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
-    var stats  = fs.statSync(socket);
-
-    if (!stats.isSocket()) {
-      throw new Error("Are you sure the docker is running?");
-    }
-    var hostOptions = {Id:'localSocket',
-      connection: {socketPath: socket}};
-    modules.collections.Hosts.upsert({Id:'localSocket'}, hostOptions, {validate:false, filter: false});
+      var socket = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
+      try {
+	  var fs = Npm.require('fs');
+	  var stats  = fs.statSync(socket);
+	  
+	  if (!stats.isSocket()) {
+	      throw new Error("Are you sure the docker is running?");
+	  }
+	  var hostOptions = {Id:'localSocket',
+			     connection: {socketPath: socket}};
+	  modules.collections.Hosts.upsert({Id:'localSocket'}, hostOptions, {validate:false, filter: false});
+      } catch(e) {
+	console.log("*** Are you sure the docker daemon is running? ***");
+	console.log("We have a problem creating the initial host from the socket \""+socket+"\".");
+	console.log("If no docker deamon run on the computer, ignore this message");
+	console.log("You can specify the docker socket with this environment variable: DOCKER_SOCKET");
+      }
   }
 
   modules.collections.Hosts.find().forEach(function(e){
