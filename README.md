@@ -18,12 +18,12 @@ Docker Total Controller reacts to docker status. The above video show how it rea
 1. Install Docker
 1. Pull and run a mongo container
 ```
-	docker run --name dtcmongodb -d mongo:2.4.12
+	docker run --name dtcmongodb -d djedi/mongo_oplog:latest
 ```
 
 1. Pull and run Docker Total Controller:
 ```
-	docker run --name dtc --link dtcmongodb:dtcmongodb --volume /var/run/docker.sock:/var/run/docker.sock -p 3000:3000 -d djedi/dtc
+	docker run --name dtc --link dtcmongodb:mongo --volume /var/run/docker.sock:/var/run/docker.sock -p 3000:3000 -d djedi/dtc:latest
 ```
 
 1. Connect to localhost:3000
