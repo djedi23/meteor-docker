@@ -1,5 +1,6 @@
 
 <template name="images">
+<div class="container-fluid">
   <form class="form-inline">
     <div class="pull-right">
 	{{#if isInRole 'image.pull'}}<a href="{{pathFor 'imagePull'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-cloud-download"></span><span class="hidden-xs"> pull</span></a>{{/if}}
@@ -39,10 +40,12 @@
       </tbody>
     </table>
   </div>
+</div>
 </template>
 
 
 <template name="imageInspect">
+<div class="container">
   <ol class="breadcrumb">
     <li><a href="{{pathFor 'images'}}">Images</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -125,10 +128,12 @@
 
   {{> imageModals}}
   {{/if}}
+</div>
 </template>
 
 
 <template name="imageRunParameter">
+<div class="container">
   <ol class="breadcrumb">
     <li><a href="/">Images</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -217,6 +222,7 @@
   </div>
   {{/autoForm}}
   {{/if}}
+</div>
 </template>
 
 
@@ -298,6 +304,7 @@
 </template>
 
 <template name="imagePullParameter">
+<div class="container">
   <ol class="breadcrumb">
     <li><a href="/">Images</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -312,9 +319,11 @@
   </form>
     {{> quickForm id="imagePull" doc=config schema="pullSchemas" type="method" meteormethod="image.pull" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Pull" }}
     {{/if}}
+</div>
 </template>
 
 <template name="imageTagParameter">
+<div class="container">
   <ol class="breadcrumb">
     <li><a href="/">Images</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -329,10 +338,12 @@
   </form>
     {{> quickForm id="imageTag" doc=config schema="tagSchemas" type="method" meteormethod="image.tag" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Tag" }}
     {{/if}}
+</div>
 </template>
 
 
 <template name="imagePushParameter">
+<div class="container">
   <ol class="breadcrumb">
     <li><a href="/">Images</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -348,6 +359,7 @@
   </form>
   {{> quickForm id="imagePush" doc=config schema="pushSchemas" type="method" meteormethod="image.push" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Push" }}
   {{/if}}
+</div>
 </template>
 
 

@@ -1,5 +1,6 @@
 
 <template name="containers">
+  <div class="container-fluid">
   <form class="form-inline">
     {{> hostFilter}}{{> containerFilter}}{{> containerImgFilter}}{{> runHooks 'template.containers.actions'}}
   </form>
@@ -42,11 +43,13 @@
       </tbody>
     </table>
   </div>
+  </div>
   {{> containerModals }}
 </template>
 
 
 <template name="containerInspect">
+  <div class="container">
   <ol class="breadcrumb">
     <li><a href="{{pathFor 'containers'}}">Containers</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -210,6 +213,7 @@
   {{/if}}
   {{> containerModals }}
   {{/if}}
+</div>
 </template>
 
 
@@ -324,6 +328,7 @@
 
 
 <template name="containerCommit">
+  <div class="container">
   <ol class="breadcrumb">
     <li><a href="{{pathFor 'containers'}}">Containers</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -339,9 +344,11 @@
   </form>
   {{> quickForm id="containerCommit" schema="commitSchemas" type="method" doc=config meteormethod="container.commit" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Commit" }}
   {{/if}}
+  </div>
 </template>
 
 <template name="containerRename">
+  <div class="container">
   <ol class="breadcrumb">
     <li><a href="{{pathFor 'containers'}}">Containers</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -357,10 +364,12 @@
   </form>
   {{> quickForm id="containerRenameForm" schema="containerRenameSchemas" type="method" doc=config meteormethod="container.rename" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Rename" }}
   {{/if}}
+  </div>
 </template>
 
 
 <template name="containerExecCreate">
+  <div class="container">
   <ol class="breadcrumb">
     <li><a href="{{pathFor 'containers'}}">Containers</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
@@ -377,6 +386,7 @@
   </form>
   {{> quickForm id="containerExecCreateForm" schema="containerExecCreateSchemas" type="method" doc=config meteormethod="container.exec.create" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Exec Create" }}
   {{/if}}
+  </div>
 </template>
 
 <template name="containerFilter">
