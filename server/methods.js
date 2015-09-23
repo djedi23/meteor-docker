@@ -60,7 +60,7 @@ listContainers = function(sinceId){
 
 dtcVersion =  function(){
   var version = JSON.parse(Assets.getText('version.json'));
-  return 'version:'+version.version+' date:'+version.date;
+  return 'version:'+version.version+' date:'+version.date+(version.build?("build:"+version.build):"");
 };
 
 

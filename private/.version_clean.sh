@@ -1,3 +1,3 @@
 #!/bin/sh
-sed -e 's/"version": "[a-f0-9]*"/"version": "HASH"/;s/"date": "[-+: 0-9]*"/"date": "CDATE"/'
+sed -e 's/"version": "[a-f0-9]*"/"version": "HASH"/;s/"date": "[-+: 0-9]*"/"date": "CDATE"/;s/"build": "[0-9]*"/"build": "BUILDNUMBER"/'
 
