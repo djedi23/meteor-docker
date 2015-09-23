@@ -30,3 +30,15 @@
     pointer-events: initial;
     cursor: pointer;
 }
+
+
+@media (max-width: 1600px) {
+    .command-button-inline {
+	display: none !important;
+/* 	display: block !important; */
+    }
+/*     .visible-mg-inline table&  { display: table; } */
+/*     .visible-mg-inline tr&     { display: table-row !important; } */
+/*     .visible-mg-inline th&, */
+/*     .visible-mg-inline  td&     { display: table-cell !important; } */
+}

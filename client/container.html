@@ -31,11 +31,11 @@
 	  <td class="hidden-xs">{{Status}}</td>
 	  {{> runHooks 'template.container.table.extra.data'}}
 	  <td>
-	    {{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> start</span></button>{{/if}}{{/if}}
-	    {{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
-	    {{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
-	    {{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
-	    {{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
+	    {{#if canStart}}{{#if isInRole 'container.start'}}<button id="bstart" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="command-button-inline"> start</span></button>{{/if}}{{/if}}
+	    {{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="command-button-inline"> Unpause</span></button>{{/if}}{{/if}}
+	    {{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pause orange"></span><span class="command-button-inline"> Pause</span></button>{{/if}}{{/if}}
+	    {{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-repeat orange"></span><span class="command-button-inline"> Restart</span></button>{{/if}}{{/if}}
+	    {{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-stop red"></span><span class="command-button-inline"> stop</span></button>{{/if}}{{/if}}
 	  </td>
 	</tr>
 	{{/each}}

@@ -32,7 +32,7 @@
 	  <td>{{#if progressDetail.total}}<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{progressDetail.current}}" aria-valuemin="0" aria-valuemax="{{progressDetail.total}}" style="width:{{progress}}%"></div></div>{{/if}}{{#unless status}}{{VirtualSize}}{{/unless}}</td>
 	  {{> runHooks 'template.image.table.extra.data'}}
 	  <td>
-	    {{#if isInRole 'image.run'}}<a href="{{pathFor 'imageRunParameter' id=Id host=_host}}" role="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> run</span></a>{{/if}}
+	    {{#if isInRole 'image.run'}}<a href="{{pathFor 'imageRunParameter' id=Id host=_host}}" role="button" class="btn btn-default btn-xs" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="command-button-inline"> run</span></a>{{/if}}
 	  </td>
 	</tr>
 	{{/each}}
