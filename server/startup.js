@@ -52,7 +52,9 @@ docker_init = function(hostId) {
 
 Meteor.startup(function () {
   docker = {};
- 
+  modules.docker ={};
+  modules.docker.api = docker;
+
   if (modules.collections.Hosts.find().count()===0){
       var socket = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
       try {
