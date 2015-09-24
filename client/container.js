@@ -70,22 +70,28 @@ Template.containers.helpers({
     return Hosts.find().count() > 1;
   },
   canPause: function(){
-    return /^Up/.test(this.Status) && ! (/Paused/.test(this.Status));
+    var status = modules.containers.statusParser(this.Status);
+    return (modules.containers.status.up === status || modules.containers.status.restarting === status && modules.containers.status.paused !== status);
   },
   canUnPause: function(){
-    return /Paused/.test(this.Status);
+    var status = modules.containers.statusParser(this.Status);
+    return modules.containers.status.paused === status;
   },
   canRestart: function(){
-    return /^Up/.test(this.Status) && ! (/Paused/.test(this.Status));
+    var status = modules.containers.statusParser(this.Status);
+    return modules.containers.status.up === status && modules.containers.status.paused !== status;
   },
   canStart: function(){
-    return /^Exited/.test(this.Status);
+    var status = modules.containers.statusParser(this.Status);
+    return modules.containers.status.exited === status;
   },
   canKill: function(){
-    return /^Up/.test(this.Status);
+    var status = modules.containers.statusParser(this.Status);
+    return modules.containers.status.up === status || modules.containers.status.restarting === status;
   },
   canStop: function(){
-    return /^Up/.test(this.Status) && ! (/Paused/.test(this.Status));
+    var status = modules.containers.statusParser(this.Status);
+    return (modules.containers.status.up === status || modules.containers.status.restarting === status) && modules.containers.status.paused !== status;
   }
 });
 
