@@ -21,6 +21,9 @@
 	{{#each errors}}
 	<tr><td>{{e}}</td><td>{{v}}</td></tr>
 	{{/each}}
+	{{#unless errors}}
+	<tr><td>No errors listed</td></tr>
+	{{/unless}}
       </table>
     </div>
   </div>

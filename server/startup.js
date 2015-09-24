@@ -13,7 +13,7 @@ docker_init = function(hostId) {
           return;
         var u = modules.collections.Hosts.update({_id:host._id}, {$set: {version:version}}, {validate:false, filter: false});
       }));
-    
+    modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:true, lastError:{warning:"Event stream not initialized"}}}, {validate:false, filter: false});
     docker[host._id].getEvents({}, Meteor.bindEnvironment(
       function(err,stream){
         if (err){
