@@ -9,6 +9,7 @@
       <thead>
 	<tr>
 	  {{#if multihost}}<th>HOST</th>{{/if}}
+	  {{> runHooks 'template.container.table.prextra.title'}}
 	  <th>NAMES</th>
 	  <th class="hidden-xs">CONTAINER ID</th>
 	  <th class="hidden-xs">IMAGE</th>
@@ -23,6 +24,7 @@
 	{{#each this}}
 	<tr>
 	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
+	  {{> runHooks 'template.container.table.prextra.data'}}
 	  <td><a href="{{pathFor 'containersInspect' id=Id host=_host}}" title="{{NamesFull}}">{{Names}}</a></td>
 	  <td class="hidden-xs">{{IdShort}}</td>
 	  <td class="hidden-xs"><a href="{{pathFor 'imagesInspect' id=ImageId host=_host}}">{{Image}}</a></td>
