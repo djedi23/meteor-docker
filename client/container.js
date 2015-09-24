@@ -1,4 +1,3 @@
-
 Template.containers.helpers({
   Image: function(){
     var image = this.Image;
@@ -6,9 +5,9 @@ Template.containers.helpers({
     if (/^[0-9a-z]{64}$/.test(ipart[0])) {
       var image_ = Images.findOne({_host:this._host, Id:ipart[0]});
       if (image_ && image_.RepoTags[0])
-	return image_.RepoTags[0];
+        return image_.RepoTags[0];
       else
-	return ipart[0].substring(0,12)+':'+ipart[1];
+        return ipart[0].substring(0,12)+':'+ipart[1];
     } else
       return image;
   },
@@ -26,7 +25,7 @@ Template.containers.helpers({
   Names: function(){
     if (this.Names)
       if (this.Names.toString().length > 40)
-	return this.Names.toString().substring(0,40)+" ...";
+        return this.Names.toString().substring(0,40)+" ...";
     else
       return this.Names;
     return null;
@@ -108,14 +107,14 @@ actionHandler = function(modalId, method, routeSuccess, notificationMsg, notific
     } else if (e.button === 0){
       var name = this.Name;
       Meteor.call(method, {host:this._host, id: this.Id}, function (error,result) {
-	if (error)
-	  Notifications.error(notificationMsg, error.reason);
-	else
-	  Notifications.success(notificationMsg, name+' '+notificationMsg2);
+        if (error)
+          Notifications.error(notificationMsg, error.reason);
+        else
+          Notifications.success(notificationMsg, name+' '+notificationMsg2);
       });
       $(e.currentTarget).blur();
       if (routeSuccess)
-	Router.go(routeSuccess);
+        Router.go(routeSuccess);
     }
   };
 };
@@ -126,9 +125,9 @@ var events = {
     var name = this.Name;
     Meteor.call('container.pause', this._host, this.Id, function (error,result) {
       if (error)
-	Notifications.error('docker pause', error.reason);
+        Notifications.error('docker pause', error.reason);
       else
-	Notifications.success('docker pause', name+" paused");
+        Notifications.success('docker pause', name+" paused");
     });
     $(e.currentTarget).blur();
   },
@@ -136,9 +135,9 @@ var events = {
     var name = this.Name;
     Meteor.call('container.unpause', this._host, this.Id, function (error,result) {
       if (error)
-	Notifications.error('docker unpause', error.reason);
+        Notifications.error('docker unpause', error.reason);
       else
-	Notifications.success('docker unpause', name+" unpaused");
+        Notifications.success('docker unpause', name+" unpaused");
     });
     $(e.currentTarget).blur();
   },
@@ -178,16 +177,16 @@ Template.containerInspect.helpers({
       var ports = this.HostConfig.PortBindings || {};
       _.defaults(ports, this.Config.ExposedPorts);
       return _.map(_.pairs(ports),
-		   function(e){
-		     if (_.isEmpty(e[1]))
-		       return e[0];
-		     else {
-		       return _.map(e[1],
-				    function(p){
-				      return e[0] +'->'+ (p.HostIp?(p.HostIp+':'):'') + p.HostPort;
-				    });
-		     }
-		   }).join(', ');
+                   function(e){
+                     if (_.isEmpty(e[1]))
+                       return e[0];
+                     else {
+                       return _.map(e[1],
+                                    function(p){
+                                      return e[0] +'->'+ (p.HostIp?(p.HostIp+':'):'') + p.HostPort;
+                                    });
+                     }
+                   }).join(', ');
     }
     return '-';
   },
@@ -252,9 +251,9 @@ Template.containerInspect.helpers({
     var hostId = this._host;
     if (this.Config){
       return _.map(_.pairs(this.Config),
-		   function(c){
-		     return filter_content(hostId, {n:c[0],p:c[1]});
-		   });
+                   function(c){
+                     return filter_content(hostId, {n:c[0],p:c[1]});
+                   });
     }
     return null;
   },
@@ -262,9 +261,9 @@ Template.containerInspect.helpers({
     var hostId = this._host;
     if (this.NetworkSettings){
       return _.map(_.pairs(this.NetworkSettings),
-		   function(c){
-		     return filter_content(hostId, {n:c[0],p:c[1]});
-		   });
+                   function(c){
+                     return filter_content(hostId, {n:c[0],p:c[1]});
+                   });
     }
     return null;
   },

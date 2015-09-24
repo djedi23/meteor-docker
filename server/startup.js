@@ -10,40 +10,40 @@ docker_init = function(hostId) {
     docker[host._id].version(
       Meteor.bindEnvironment(function (err, version) {
         if (err)
-	  return;
+          return;
         var u = modules.collections.Hosts.update({_id:host._id}, {$set: {version:version}}, {validate:false, filter: false});
       }));
     
     docker[host._id].getEvents({}, Meteor.bindEnvironment(
       function(err,stream){
-	if (err){
-	  if (! host.disabled)
-	    console.log(host, err);
+        if (err){
+          if (! host.disabled)
+            console.log(host, err);
           modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:false, lastError:err}}, {validate:false, filter: false});
           Meteor.setTimeout(function() {
-	    docker_init(host._id);
+            docker_init(host._id);
           }, Math.round(10000/(1+ Math.exp(-0.15*(errorCount-30)))) );
           errorCount++;
-	}
-	else {
+        }
+        else {
           modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:true}}, {validate:false, filter: false});
           errorCount=0;
-	  docker[host._id]._eventStream = stream;
+          docker[host._id]._eventStream = stream;
           stream.on('data', Meteor.bindEnvironment(
-	    function(chunk) {
+            function(chunk) {
               var event = JSON.parse(chunk.toString());
               eventHandle(host._id,event);
               modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:true}}, {validate:false, filter: false});
-	    })).on('end', Meteor.bindEnvironment(
-	      function(error) {
-		modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:false, lastError:err}}, {validate:false, filter: false});
-		docker_init(host._id);
-	      })).on('error', Meteor.bindEnvironment(
-		function(error) {
-		  modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:false, lastError:err}}, {validate:false, filter: false});
-		  docker_init(host._id);
-		}));
-	}}));
+            })).on('end', Meteor.bindEnvironment(
+              function(error) {
+                modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:false, lastError:err}}, {validate:false, filter: false});
+                docker_init(host._id);
+              })).on('error', Meteor.bindEnvironment(
+                function(error) {
+                  modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:false, lastError:err}}, {validate:false, filter: false});
+                  docker_init(host._id);
+                }));
+        }}));
   } catch(exp) {
     console.log(exp);
   }
@@ -56,20 +56,20 @@ Meteor.startup(function () {
   if (modules.collections.Hosts.find().count()===0){
       var socket = process.env.DOCKER_SOCKET || '/var/run/docker.sock';
       try {
-	  var fs = Npm.require('fs');
-	  var stats  = fs.statSync(socket);
-	  
-	  if (!stats.isSocket()) {
-	      throw new Error("Are you sure the docker is running?");
-	  }
-	  var hostOptions = {Id:'localSocket',
-			     connection: {socketPath: socket}};
-	  modules.collections.Hosts.upsert({Id:'localSocket'}, hostOptions, {validate:false, filter: false});
+          var fs = Npm.require('fs');
+          var stats  = fs.statSync(socket);
+
+          if (!stats.isSocket()) {
+              throw new Error("Are you sure the docker is running?");
+          }
+          var hostOptions = {Id:'localSocket',
+                             connection: {socketPath: socket}};
+          modules.collections.Hosts.upsert({Id:'localSocket'}, hostOptions, {validate:false, filter: false});
       } catch(e) {
-	console.log("*** Are you sure the docker daemon is running? ***");
-	console.log("We have a problem creating the initial host from the socket \""+socket+"\".");
-	console.log("If no docker deamon run on the computer, ignore this message");
-	console.log("You can specify the docker socket with this environment variable: DOCKER_SOCKET");
+        console.log("*** Are you sure the docker daemon is running? ***");
+        console.log("We have a problem creating the initial host from the socket \""+socket+"\".");
+        console.log("If no docker deamon run on the computer, ignore this message");
+        console.log("You can specify the docker socket with this environment variable: DOCKER_SOCKET");
       }
   }
 
