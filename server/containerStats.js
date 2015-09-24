@@ -7,6 +7,9 @@ startMonitoringContainer = function(hostId, containerId){
     return;
   if (docker[hostId] === undefined)
     return;
+  if (modules.stats === undefined || modules.stats.active === undefined || ! modules.stats.active)
+    return;
+
 
   var container = docker[hostId].getContainer(containerId);
   if (!container)
@@ -27,7 +30,7 @@ startMonitoringContainer = function(hostId, containerId){
             var stat = JSON.parse(chunk);
             stat.Id = containerId;
             stat._host = hostId;
-            stat.read = moment(stat.read).toDate();
+            stat.read = moment(stat.read).millisecond(0).toDate();
             ContainersStats.upsert({Id:stat.Id, _host: stat._host, read: stat.read}, stat);
           } catch(err){
             console.log('error during stats: ', err, chunk.toString());
@@ -60,9 +63,9 @@ SyncedCron.add({
     return parser.text('every 2 hours');
   },
   job: function() {
-    var query = {read: {$lt: moment().subtract(1, 'days').toDate()}};
+    var query = {read: {$lt: moment().subtract(4, 'hours').toDate()}};
     var stats = ContainersStats.find(query);
-    ContainersStats.remove(query)
+    ContainersStats.remove(query);
     return stats.count();
   }
 });

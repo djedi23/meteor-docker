@@ -59,7 +59,11 @@ Meteor.publishComposite("containerInspect", function(hostId, containerId){
     children: [
       {
         find: function(container) {
-          return ContainersStats.find({_host:container._host, Id:container.Id},{sort: {read: -1}, limit:60});
+          if (modules.stats === undefined || modules.stats.active === undefined || ! modules.stats.active)
+            return;
+          return ContainersStats.find({_host:container._host, Id:container.Id},{fields: modules.stats.fields,
+            sort: {read: -1}, limit:60});
+        }
       },
       {
         find: function(container) {
