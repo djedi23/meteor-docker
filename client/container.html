@@ -92,7 +92,7 @@
       </div>
       <div class="row">
 	<div class="col-md-1">Links:</div>
-	<div class="col-md-11">{{Links}}</div>
+	<div class="col-md-11">{{#each Links}}{{#if id}}<a href="{{pathFor 'containersInspect' id=id host=_host}}">{{link}}</a>{{else}}{{link}}{{/if}}{{#unless end}}, {{/unless}}{{/each}}{{#unless Links}}-{{/unless}}</div>
       </div>
       <div class="row">
 	<div class="col-md-1">Volumes:</div>

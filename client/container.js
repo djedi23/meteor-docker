@@ -187,9 +187,22 @@ Template.containerInspect.helpers({
   },
   Links: function(){
     if (this.HostConfig && this.HostConfig.Links){
-      return this.HostConfig.Links;
+      var end = this.HostConfig.Links.length - 1;
+      return _.map(this.HostConfig.Links,
+                   function(link,i){
+                     var container = ContainersInspect.findOne({Name: link.split(':')[0]});
+                     if (container){
+                       console.log(i,end);
+                       return {link: link,
+                               _host:container._host,
+                               id: container.Id,
+                               end: end===i};
+                     }
+                     else
+                       return {link: link};
+                   });
     }
-    return '-';
+    return null;
   },
   Binds: function(){
     if (this.HostConfig && this.HostConfig.Binds){

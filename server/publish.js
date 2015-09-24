@@ -60,6 +60,17 @@ Meteor.publishComposite("containerInspect", function(hostId, containerId){
       {
         find: function(container) {
           return ContainersStats.find({_host:container._host, Id:container.Id},{sort: {read: -1}, limit:60});
+      },
+      {
+        find: function(container) {
+	  if (container.HostConfig && container.HostConfig.Links){
+	    var links = _.map(container.HostConfig.Links,
+			      function(link){
+				return link.split(':')[0];
+			      });
+	    return ContainersInspect.find({Name: {$in: links}},{fields: {_host:1, Id:1, Name:1}});
+	  }
+	  return null;
         }
       }
     ]
