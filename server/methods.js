@@ -700,6 +700,8 @@ Meteor.methods({
       copyIfExists(params,create_options, 'AttachStdout');
       copyIfExists(params,create_options, 'Memory');
       copyIfExists(params,create_options, 'MemorySwap');
+      copyIfExists(params,create_options, 'OpenStdin');
+      copyIfExists(params,create_options, 'StdinOnce');
 
       create_options.ExposedPorts ={};
       create_options.HostConfig = {};
