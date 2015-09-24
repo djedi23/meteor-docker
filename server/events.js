@@ -1,6 +1,5 @@
-
 eventHandle = function(host, event){
-  // event export
+  // event attach, commit, copy, exec_create, exec_start, export, oom, rename, resize, top
   switch(event.status){
   case 'destroy':
     Containers.remove({_host: host, Id:event.id});
@@ -28,6 +27,8 @@ eventHandle = function(host, event){
     listImages();
     imageDetail(host, event.id);
     break;
+    default:
+    console.log("unhandled EVENT",event);
   }
   modules.calls('events.'+event.status+'.'+event.id, this, host, event);
 };
