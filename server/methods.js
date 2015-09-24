@@ -49,6 +49,15 @@ listContainers = function(sinceId){
           function(e){list[e.Id]=1;});
         containers.forEach(function(container){
           container._host = hostId;
+          v = {};
+          if (container.Labels)
+            _.each(_.pairs(container.Labels),
+              function(p){
+                p[0] = p[0].replace(/\./g,'U+FF0E');
+                v[p[0]] = p[1];
+              });
+          container.Labels = v;
+
           var u = Containers.upsert({_host:hostId, Id:container.Id}, {$set: container});
           delete list[container.Id];
         });
@@ -101,7 +110,7 @@ containerDetails = function(hostId, containerId){
                       if (container.Volumes)
                         _.each(_.pairs(container.Volumes),
                           function(p){
-                            p[0] = p[0].replace('.','U+FF0E');
+                            p[0] = p[0].replace(/\./g,'U+FF0E');
                             v[p[0]] = p[1];
                           });
                       container.Volumes = v;
@@ -110,7 +119,7 @@ containerDetails = function(hostId, containerId){
                       if (container.VolumesRW)
                         _.each(_.pairs(container.VolumesRW),
                           function(p){
-                            p[0] = p[0].replace('.','U+FF0E');
+                            p[0] = p[0].replace(/\./g,'U+FF0E');
                             v[p[0]] = p[1];
                           });
                       container.VolumesRW = v;
@@ -119,10 +128,37 @@ containerDetails = function(hostId, containerId){
                       if (container.Config && container.Config.Volumes)
                         _.each(_.pairs(container.Config.Volumes),
                           function(p){
-                            p[0] = p[0].replace('.','U+FF0E');
+                            p[0] = p[0].replace(/\./g,'U+FF0E');
                             v[p[0]] = p[1];
                           });
                       container.Config.Volumes = v;
+
+                      v = {};
+                      if (container.Labels)
+                        _.each(_.pairs(container.Labels),
+                          function(p){
+                            p[0] = p[0].replace(/\./g,'U+FF0E');
+                            v[p[0]] = p[1];
+                          });
+                      container.Labels = v;
+
+                      v = {};
+                      if (container.Config.Labels)
+                        _.each(_.pairs(container.Config.Labels),
+                          function(p){
+                            p[0] = p[0].replace(/\./g,'U+FF0E');
+                            v[p[0]] = p[1];
+                          });
+                      container.Config.Labels = v;
+
+                      v = {};
+                      if (container.HostConfig.Labels)
+                        _.each(_.pairs(container.HostConfig.Labels),
+                          function(p){
+                            p[0] = p[0].replace(/\./g,'U+FF0E');
+                            v[p[0]] = p[1];
+                          });
+                      container.HostConfig.Labels = v;
 
 
                       var u = ContainersInspect.upsert({_host:hostId, Id:container.Id}, {$set: container});
@@ -159,6 +195,16 @@ listImages = function(){
 
         images.forEach(function(img){
           img._host = hostId;
+
+          v = {};
+          if (img.Labels)
+            _.each(_.pairs(img.Labels),
+              function(p){
+                p[0] = p[0].replace(/\./g,'U+FF0E');
+                v[p[0]] = p[1];
+              });
+          img.Labels = v;
+
           var u = Images.upsert({_host:hostId, Id:img.Id}, {$set: img});
           delete list[img.Id];
         });
@@ -179,24 +225,42 @@ imageDetail = function(hostId, imgId){
   var img = docker[hostId].getImage(imgId);
   if (img) {
     img.inspect(Meteor.bindEnvironment(function (err, image) {
-                  if (err)
-                    return;
-                  var img = Images.findOne({_host:hostId, Id:image.Id});
-                  if (img)
-                    image.tags = img.RepoTags;
-
-                  image._host = hostId;
-                  if (image._id)
-                    delete image._id;
-                  var u = ImagesInspect.upsert({_host:hostId,Id:image.Id}, {$set: image});
-                }));
+      if (err)
+        return;
+      var img = Images.findOne({_host:hostId, Id:image.Id});
+      if (img)
+        image.tags = img.RepoTags;
+      
+      image._host = hostId;
+      if (image._id)
+        delete image._id;
+      
+      v = {};
+      if (image.ContainerConfig.Labels)
+        _.each(_.pairs(image.ContainerConfig.Labels),
+	       function(p){
+                 p[0] = p[0].replace(/\./g,'U+FF0E');
+                 v[p[0]] = p[1];
+               });
+      image.ContainerConfig.Labels = v;
+      v = {};
+      if (image.Config.Labels)
+        _.each(_.pairs(image.Config.Labels),
+	       function(p){
+                 p[0] = p[0].replace(/\./g,'U+FF0E');
+                 v[p[0]] = p[1];
+               });
+      image.Config.Labels = v;
+      
+      var u = ImagesInspect.upsert({_host:hostId,Id:image.Id}, {$set: image});
+    }));
     img.history(Meteor.bindEnvironment(function (err, history) {
-                  if (err)
-                    return;
-                  var image = {_host:hostId,Id: imgId,
-                    history: history};
-                  var u = ImagesInspect.upsert({_host:hostId,Id:imgId}, {$set: image});
-                }));
+      if (err)
+        return;
+      var image = {_host:hostId,Id: imgId,
+                   history: history};
+      var u = ImagesInspect.upsert({_host:hostId,Id:imgId}, {$set: image});
+    }));
   }
 };
 

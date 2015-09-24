@@ -212,7 +212,7 @@ Template.containerInspect.helpers({
   },
   Labels: function(){
     if ( ensureApi(this._host,"1.18") && this.Config && this.Config.Labels){
-      return _.map(_.pairs(this.Config.Labels),function(label){ return label[0] + ' = ' + label[1];});
+      return _.map(_.pairs(this.Config.Labels),function(label){ return filterChars(label[0]) + ' = ' + label[1];}).join(', ');
     }
     return '-';
   },
