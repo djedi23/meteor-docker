@@ -223,7 +223,9 @@ Template.containerInspect.helpers({
     return '-';
   },
   logs: function() {
-    return ansi_up.ansi_to_html(ansi_up.escape_for_html(this.logs));
+    if (this.logs)
+      return ansi_up.ansi_to_html(ansi_up.escape_for_html(this.logs));
+    return null;
   },
   haveData: function () {
     return !(!this);
@@ -316,6 +318,20 @@ Template.containerInspect.helpers({
 });
 
 Template.containerInspect.events(events);
+
+Template.containerInspect.onRendered(function(){
+  var self = this.data;
+  if (self !== null)
+    this.hearthbeat = Meteor.setInterval(function(){
+      Meteor.apply('container.details',[self._host,self.Id], {wait:true});
+    }, 2000);
+});
+
+Template.containerInspect.onDestroyed(function(){
+  if (this.hearthbeat)
+    Meteor.clearInterval(this.hearthbeat);
+});
+
 
 Template.containerCommit.helpers({
   IdShort: function(){
