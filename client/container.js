@@ -322,8 +322,19 @@ Template.containerInspect.onRendered(function(){
   var self = this.data;
   if (self !== null)
     this.hearthbeat = Meteor.setInterval(function(){
-      Meteor.apply('container.details',[self._host,self.Id], {wait:true});
-    }, 2000);
+                        Meteor.apply('container.details',[self._host,self.Id], {wait:true});
+                      }, 2000);
+
+  this.autorun(function(){
+    var self = Template.currentData();
+    if (self)
+      Containers.find({Id:self.Id, _host:self._host}).observeChanges({
+        removed:function(id){
+          Notifications.success('docker container ', self.Id+" removed");
+          Router.go('containers');
+        }
+      });
+  });
 });
 
 Template.containerInspect.onDestroyed(function(){
