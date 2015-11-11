@@ -134,7 +134,7 @@
 	<table class="table table-condensed table-striped">
 	  <tbody>
 	    {{#each networkSettings}}
-	    <tr><td>{{n}}</td><td>{{p}}</td></tr>
+	    <tr><td>{{n}}</td><td>{{#if link}}<a href="{{link}}">{{p}}</a>{{/if}}{{#unless link}}{{#if a}}{{> expandArray p}}{{else}}{{p}}{{/if}}{{/unless}}</td></tr>
 	    {{/each}}
 	  </tbody>
 	</table>
