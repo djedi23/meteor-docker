@@ -1,94 +1,103 @@
 Template.containers.helpers({
-  Image: function(){
+  Image: function() {
     var image = this.Image;
     var ipart = image.split(':');
     if (/^[0-9a-z]{64}$/.test(ipart[0])) {
-      var image_ = Images.findOne({_host:this._host, Id:ipart[0]});
+      var image_ = Images.findOne({
+        _host: this._host,
+        Id: ipart[0]
+      });
       if (image_ && image_.RepoTags[0])
         return image_.RepoTags[0];
       else
-        return ipart[0].substring(0,12)+':'+ipart[1];
+        return ipart[0].substring(0, 12) + ':' + ipart[1];
     } else
       return image;
   },
-  ImageId: function(){
+  ImageId: function() {
     var image_ = this.Image;
     var ipart = image_.split(':');
     if (/^[0-9a-z]{64}$/.test(ipart[0]))
-      var image = Images.findOne({_host:this._host, Id:ipart[0]});
+      var image = Images.findOne({
+        _host: this._host,
+        Id: ipart[0]
+      });
     else
-      image = Images.findOne({_host:this._host, RepoTags:this.Image});
+      image = Images.findOne({
+        _host: this._host,
+        RepoTags: this.Image
+      });
     if (image)
       return image.Id;
     return undefined;
   },
-  Names: function(){
+  Names: function() {
     if (this.Names)
       if (this.Names.toString().length > 40)
-        return this.Names.toString().substring(0,40)+" ...";
-    else
-      return this.Names;
+        return this.Names.toString().substring(0, 40) + " ...";
+      else
+        return this.Names;
     return null;
   },
-  NamesFull: function(){
+  NamesFull: function() {
     if (this.Names)
       return this.Names;
     return null;
   },
-  Created: function(){
+  Created: function() {
     if (this.Created)
       return moment.unix(this.Created).fromNow();
     return null;
   },
-  IdShort: function(){
+  IdShort: function() {
     if (this.Id)
-      return this.Id.substring(0,12);
+      return this.Id.substring(0, 12);
     return null;
   },
   hostId: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host)
       return host.Id;
     return null;
   },
   hostInvalid: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host && host.status)
-      return host.status===true?null:true;
+      return host.status === true ? null : true;
     return true;
   },
-  VirtualSize: function(){
+  VirtualSize: function() {
     if (this.VirtualSize)
       return filesize(this.VirtualSize);
     return null;
   },
-  haveData: function () {
+  haveData: function() {
     return this && this.count() > 0;
   },
   multihost: function() {
     return Hosts.find().count() > 1;
   },
-  canPause: function(){
+  canPause: function() {
     var status = modules.containers.statusParser(this.Status);
     return (modules.containers.status.up === status || modules.containers.status.restarting === status && modules.containers.status.paused !== status);
   },
-  canUnPause: function(){
+  canUnPause: function() {
     var status = modules.containers.statusParser(this.Status);
     return modules.containers.status.paused === status;
   },
-  canRestart: function(){
+  canRestart: function() {
     var status = modules.containers.statusParser(this.Status);
     return modules.containers.status.up === status && modules.containers.status.paused !== status;
   },
-  canStart: function(){
+  canStart: function() {
     var status = modules.containers.statusParser(this.Status);
     return modules.containers.status.exited === status;
   },
-  canKill: function(){
+  canKill: function() {
     var status = modules.containers.statusParser(this.Status);
     return modules.containers.status.up === status || modules.containers.status.restarting === status;
   },
-  canStop: function(){
+  canStop: function() {
     var status = modules.containers.statusParser(this.Status);
     return (modules.containers.status.up === status || modules.containers.status.restarting === status) && modules.containers.status.paused !== status;
   }
@@ -96,21 +105,24 @@ Template.containers.helpers({
 
 var currentContainer = new ReactiveVar();
 actionHandler = function(modalId, method, routeSuccess, notificationMsg, notificationMsg2) {
-  return function(e, tpl){
-    if (e.button === 1 || e.button === 2){
-      tpl.$(modalId+ ' input[name="id"]').val(this.Id);
-      tpl.$(modalId+ ' input[name="host"]').val(this._host);
+  return function(e, tpl) {
+    if (e.button === 1 || e.button === 2) {
+      tpl.$(modalId + ' input[name="id"]').val(this.Id);
+      tpl.$(modalId + ' input[name="host"]').val(this._host);
       tpl.$(modalId).modal();
       currentContainer.set(this._id);
       $(e.currentTarget).blur();
       return;
-    } else if (e.button === 0){
+    } else if (e.button === 0) {
       var name = this.Name;
-      Meteor.call(method, {host:this._host, id: this.Id}, function (error,result) {
+      Meteor.call(method, {
+        host: this._host,
+        id: this.Id
+      }, function(error, result) {
         if (error)
           Notifications.error(notificationMsg, error.reason);
         else
-          Notifications.success(notificationMsg, name+' '+notificationMsg2);
+          Notifications.success(notificationMsg, name + ' ' + notificationMsg2);
       });
       $(e.currentTarget).blur();
       if (routeSuccess)
@@ -121,27 +133,27 @@ actionHandler = function(modalId, method, routeSuccess, notificationMsg, notific
 
 var events = {
   'mousedown #brm': actionHandler('#containerRemoveModal', 'container.rm', 'containers', 'docker rm', 'removed'),
-  'click #bpause': function(e){
+  'click #bpause': function(e) {
     var name = this.Name;
-    Meteor.call('container.pause', this._host, this.Id, function (error,result) {
+    Meteor.call('container.pause', this._host, this.Id, function(error, result) {
       if (error)
         Notifications.error('docker pause', error.reason);
       else
-        Notifications.success('docker pause', name+" paused");
+        Notifications.success('docker pause', name + " paused");
     });
     $(e.currentTarget).blur();
   },
-  'click #bunpause': function(e){
+  'click #bunpause': function(e) {
     var name = this.Name;
-    Meteor.call('container.unpause', this._host, this.Id, function (error,result) {
+    Meteor.call('container.unpause', this._host, this.Id, function(error, result) {
       if (error)
         Notifications.error('docker unpause', error.reason);
       else
-        Notifications.success('docker unpause', name+" unpaused");
+        Notifications.success('docker unpause', name + " unpaused");
     });
     $(e.currentTarget).blur();
   },
-  'mousedown #brestart': actionHandler("#containerRestartModal", 'container.restart', null, 'docker restart','restarted'),
+  'mousedown #brestart': actionHandler("#containerRestartModal", 'container.restart', null, 'docker restart', 'restarted'),
   'mousedown #bstart': actionHandler('#containerStartModal', 'container.start', null, 'docker start', 'started'),
   'mousedown #bkill': actionHandler('#containerKillModal', 'container.kill', null, 'docker kill', 'killed'),
   'mousedown #bstop': actionHandler('#containerStopModal', 'container.stop', null, 'docker stop', 'stopped')
@@ -158,66 +170,73 @@ Template.containerInspect.helpers({
       return image.Id;
     return undefined;
   },
-  Created: function(){
+  Created: function() {
     return moment.unix(this.Created).fromNow();
   },
-  IdShort: function(){
+  IdShort: function() {
     if (this.Id)
-      return this.Id.substring(0,12);
+      return this.Id.substring(0, 12);
     return undefined;
   },
-  command: function(){
+  command: function() {
     var cmd = this.Path || '';
     if (this.Args)
-      cmd += ' '+this.Args.join(' ');
+      cmd += ' ' + this.Args.join(' ');
     return cmd;
   },
-  ExposedPorts: function(){
-    if (this.Config){
+  ExposedPorts: function() {
+    if (this.Config) {
       var ports = this.HostConfig.PortBindings || {};
       _.defaults(ports, this.Config.ExposedPorts);
       return _.map(_.pairs(ports),
-                   function(e){
-                     if (_.isEmpty(e[1]))
-                       return e[0];
-                     else {
-                       return _.map(e[1],
-                                    function(p){
-                                      return e[0] +'->'+ (p.HostIp?(p.HostIp+':'):'') + p.HostPort;
-                                    });
-                     }
-                   }).join(', ');
+        function(e) {
+          if (_.isEmpty(e[1]))
+            return e[0];
+          else {
+            return _.map(e[1],
+              function(p) {
+                return e[0] + '->' + (p.HostIp ? (p.HostIp + ':') : '') + p.HostPort;
+              });
+          }
+        }).join(', ');
     }
     return '-';
   },
-  Links: function(){
-    if (this.HostConfig && this.HostConfig.Links){
+  Links: function() {
+    if (this.HostConfig && this.HostConfig.Links) {
       var end = this.HostConfig.Links.length - 1;
       return _.map(this.HostConfig.Links,
-                   function(link,i){
-                     var container = ContainersInspect.findOne({Name: link.split(':')[0]});
-                     if (container){
-                       console.log(i,end);
-                       return {link: link,
-                               _host:container._host,
-                               id: container.Id,
-                               end: end===i};
-                     }
-                     else
-                       return {link: link};
-                   });
+        function(link, i) {
+          var container = ContainersInspect.findOne({
+            Name: link.split(':')[0]
+          });
+          if (container) {
+            console.log(i, end);
+            return {
+              link: link,
+              _host: container._host,
+              id: container.Id,
+              end: end === i
+            };
+          } else
+            return {
+              link: link
+            };
+        });
     }
     return null;
   },
-  Binds: function(){
-    if (this.HostConfig && this.HostConfig.Binds){
+  Binds: function() {
+    if (this.HostConfig && this.HostConfig.Binds) {
       return this.HostConfig.Binds;
     }
     return '-';
   },
-  Labels: function(){
-    if ( ensureApi(this._host,"1.18") && this.Config && this.Config.Labels){
-      return _.map(_.pairs(this.Config.Labels),function(label){ return filterChars(label[0]) + ' = ' + label[1];}).join(', ');
+  Labels: function() {
+    if (ensureApi(this._host, "1.18") && this.Config && this.Config.Labels) {
+      return _.map(_.pairs(this.Config.Labels), function(label) {
+        return filterChars(label[0]) + ' = ' + label[1];
+      }).join(', ');
     }
     return '-';
   },
@@ -226,20 +245,20 @@ Template.containerInspect.helpers({
       return ansi_up.ansi_to_html(ansi_up.escape_for_html(this.logs));
     return null;
   },
-  haveData: function () {
+  haveData: function() {
     return !(!this);
   },
   multihost: function() {
     return Hosts.find().count() > 1;
   },
   hostInvalid: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host && host.status)
-      return host.status===true?null:true;
+      return host.status === true ? null : true;
     return true;
   },
   hostId: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host)
       return host.Id;
     return null;
@@ -274,42 +293,42 @@ Template.containerInspect.helpers({
     }
     return null;
   },
-  canPause: function(){
+  canPause: function() {
     if (this.State)
       return (this.State.Running && !this.State.Paused);
     return undefined;
   },
-  canUnPause: function(){
+  canUnPause: function() {
     if (this.State)
       return (this.State.Running && this.State.Paused);
     return undefined;
   },
-  canRestart: function(){
+  canRestart: function() {
     if (this.State)
       return (this.State.Running && !this.State.Paused);
     return undefined;
   },
-  canStart: function(){
+  canStart: function() {
     if (this.State)
       return !(this.State.Running);
     return undefined;
   },
-  canRemove: function(){
+  canRemove: function() {
     if (this.State)
       return !(this.State.Running);
     return undefined;
   },
-  canKill: function(){
+  canKill: function() {
     if (this.State)
       return this.State.Running && !this.State.Paused;
     return undefined;
   },
-  canStop: function(){
+  canStop: function() {
     if (this.State)
       return this.State.Running && !this.State.Paused;
     return undefined;
   },
-  canExec: function(){
+  canExec: function() {
     if (this.State)
       return this.State.Running && !this.State.Paused;
     return undefined;
@@ -321,39 +340,44 @@ Template.containerInspect.events(events);
 Template.containerInspect.onRendered(function(){
   var self = this.data;
   if (self !== null)
-    this.hearthbeat = Meteor.setInterval(function(){
-                        Meteor.apply('container.details',[self._host,self.Id], {wait:true});
-                      }, 2000);
+    this.hearthbeat = Meteor.setInterval(function() {
+      Meteor.apply('container.details', [self._host, self.Id], {
+        wait: true
+      });
+    }, 2000);
 
-  this.autorun(function(){
+  this.autorun(function() {
     var self = Template.currentData();
     if (self)
-      Containers.find({Id:self.Id, _host:self._host}).observeChanges({
-        removed:function(id){
-          Notifications.success('docker container ', self.Id+" removed");
+      Containers.find({
+        Id: self.Id,
+        _host: self._host
+      }).observeChanges({
+        removed: function(id) {
+          Notifications.success('docker container ', self.Id + " removed");
           Router.go('containers');
         }
       });
   });
 });
 
-Template.containerInspect.onDestroyed(function(){
+Template.containerInspect.onDestroyed(function() {
   if (this.hearthbeat)
     Meteor.clearInterval(this.hearthbeat);
 });
 
 
 Template.containerCommit.helpers({
-  IdShort: function(){
+  IdShort: function() {
     if (this.Id)
-      return this.Id.substring(0,12);
+      return this.Id.substring(0, 12);
     return null;
   },
   multihost: function() {
     return Hosts.find().count() > 1;
   },
   hostId: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host)
       return host.Id;
     return null;
@@ -364,23 +388,23 @@ Template.containerCommit.helpers({
     config.host = this._host;
     config.Config = this.Config;
 
-    if (Meteor.user() && Meteor.user().emails && Meteor.user().emails.length>0)
+    if (Meteor.user() && Meteor.user().emails && Meteor.user().emails.length > 0)
       config.author = Meteor.user().emails[0].address;
     return config;
   }
 });
 
 Template.containerRename.helpers({
-  IdShort: function(){
+  IdShort: function() {
     if (this.Id)
-      return this.Id.substring(0,12);
+      return this.Id.substring(0, 12);
     return null;
   },
   multihost: function() {
     return Hosts.find().count() > 1;
   },
   hostId: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host)
       return host.Id;
     return null;
@@ -397,16 +421,16 @@ Template.containerRename.helpers({
 
 
 Template.containerExecCreate.helpers({
-  IdShort: function(){
+  IdShort: function() {
     if (this.Id)
-      return this.Id.substring(0,12);
+      return this.Id.substring(0, 12);
     return null;
   },
   multihost: function() {
     return Hosts.find().count() > 1;
   },
   hostId: function() {
-    var host =  Hosts.findOne(this._host);
+    var host = Hosts.findOne(this._host);
     if (host)
       return host.Id;
     return null;
@@ -421,25 +445,33 @@ Template.containerExecCreate.helpers({
 });
 
 Template.containerModals.helpers({
-  configRemove: function(){
-    var self = Containers.findOne({_id: currentContainer.get()});
+  configRemove: function() {
+    var self = Containers.findOne({
+      _id: currentContainer.get()
+    });
     if (!self)
-      self = ContainersInspect.findOne({_id: currentContainer.get()});
+      self = ContainersInspect.findOne({
+        _id: currentContainer.get()
+      });
     if (!self)
       return null;
-    var config = modules.call('container.remove.parameter.config',self, self._host, self.Id);
+    var config = modules.call('container.remove.parameter.config', self, self._host, self.Id);
     if (!config) {
       config = self;
     }
     return config;
   },
-  configStop: function(){
-    var self = Containers.findOne({_id: currentContainer.get()});
+  configStop: function() {
+    var self = Containers.findOne({
+      _id: currentContainer.get()
+    });
     if (!self)
-      self = ContainersInspect.findOne({_id: currentContainer.get()});
+      self = ContainersInspect.findOne({
+        _id: currentContainer.get()
+      });
     if (!self)
       return null;
-    var config = modules.call('container.stop.parameter.config',self, self._host, self.Id);
+    var config = modules.call('container.stop.parameter.config', self, self._host, self.Id);
     if (!config) {
       config = self;
     }
@@ -448,14 +480,14 @@ Template.containerModals.helpers({
 });
 
 Template.containerFilter.helpers({
-  value: function(){
+  value: function() {
     return Session.get('containerFilter');
   }
 });
 Template.containerFilter.events(eventsForFilters('containerFilter'));
 
 Template.containerImgFilter.helpers({
-  value: function(){
+  value: function() {
     return Session.get('containerImgFilter');
   }
 });

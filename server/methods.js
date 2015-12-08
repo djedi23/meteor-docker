@@ -230,11 +230,11 @@ imageDetail = function(hostId, imgId){
       var img = Images.findOne({_host:hostId, Id:image.Id});
       if (img)
         image.tags = img.RepoTags;
-      
+
       image._host = hostId;
       if (image._id)
         delete image._id;
-      
+
       v = {};
       if (image.ContainerConfig.Labels)
         _.each(_.pairs(image.ContainerConfig.Labels),
@@ -250,8 +250,9 @@ imageDetail = function(hostId, imgId){
                  p[0] = p[0].replace(/\./g,'U+FF0E');
                  v[p[0]] = p[1];
                });
-      image.Config.Labels = v;
-      
+        image.Config.Labels = v;
+      }
+
       var u = ImagesInspect.upsert({_host:hostId,Id:image.Id}, {$set: image});
     }));
     img.history(Meteor.bindEnvironment(function (err, history) {
