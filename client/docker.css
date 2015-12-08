@@ -42,3 +42,9 @@
 /*     .visible-mg-inline th&, */
 /*     .visible-mg-inline  td&     { display: table-cell !important; } */
 }
+
+.input-xs {
+  height: 22px;
+  font-size: 12px;
+  padding: 1px 5px;
+}

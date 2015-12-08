@@ -214,6 +214,37 @@ listImages = function(){
   });
 };
 
+listVolumes = function(){
+  _.each(_.pairs(docker), function(dockerHost) {
+    var hostId = dockerHost[0];
+    var docker = dockerHost[1];
+    if (ensureApi(hostId,'1.21')) {
+      var list = {};
+      _.each(Volumes.find({_host:hostId},{fields:{Name:1}}).fetch(),
+        function(e){list[e.Name]=1;});
+
+      docker.listVolumes(Meteor.bindEnvironment(
+        function (err, volumes) {
+          if (err)
+            return;
+
+          if (!volumes.Volumes)
+            return;
+
+          volumes.Volumes.forEach(function(vol){
+            vol._host = hostId;
+
+            var u = Volumes.upsert({_host:hostId,Name:vol.Name}, {$set: vol});
+            delete list[vol.Name];
+          });
+          Volumes.remove({Name:{$in:_.keys(list)}});
+          VolumesInspect.remove({Name:{$in:_.keys(list)}});
+        }));
+    }
+  });
+};
+
+
 imageDetail = function(hostId, imgId){
   check(hostId, checkHostId);
   check(imgId, checkDockerId);
@@ -768,5 +799,92 @@ Meteor.methods({
     if (! Roles.userIsInRole(Meteor.user(), ['admin','image.tag']))
       throw new Meteor.Error(403, "Not authorized to tag image");
     imageCall(opts,'tag');
-  }
+  },
+  'volume.list': function(){
+    if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.list']))
+      throw new Meteor.Error(403, "Not authorized to list volumes");
+    if (docker == undefined)
+      return null;
+
+    listVolumes();
+  },
+  'volume.create':function(opts){
+    check(opts, volumeCreateSchemas);
+    check(opts.host, checkHostId);
+    if (ensureApi(opts.host, "1.21")){
+      if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.create']))
+        throw new Meteor.Error(403, "Not authorized to tag image");
+
+      if (opts.host) {
+        Future = Npm.require('fibers/future');
+        var myFuture = new Future();
+
+        docker[opts.host].createVolume(opts, function(err, result) {
+          if (err) {
+            myFuture.throw(err.reason);
+          }
+          else
+            myFuture.return(result);
+        });
+        try {
+          return myFuture.wait();
+        }
+        catch (err) {
+          throw new Meteor.Error('docker', err.toString());
+        }
+      }
+    }},
+  'volume.remove':function(opts){
+    check(opts, {host:checkHostId, Name:String});
+    if (ensureApi(opts.host, "1.21")){
+      if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.remove']))
+        throw new Meteor.Error(403, "Not authorized to tag image");
+
+      if (opts.host) {
+        Future = Npm.require('fibers/future');
+        var myFuture = new Future();
+        var volume = docker[opts.host].getVolume(opts.Name);
+        volume.remove(opts, function(err, result) {
+          if (err) {
+            myFuture.throw(err.reason);
+          }
+          else
+            myFuture.return(result);
+        });
+        try {
+          return myFuture.wait();
+        }
+        catch (err) {
+          throw new Meteor.Error('docker', err.toString());
+        }
+      }
+    }},
+  'volume.inspect':function(opts){
+    check(opts, {host:checkHostId, Name:String});
+    if (ensureApi(opts.host, "1.21")){
+      if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.remove']))
+        throw new Meteor.Error(403, "Not authorized to tag image");
+
+      if (opts.host) {
+        Future = Npm.require('fibers/future');
+        var myFuture = new Future();
+        var volume = docker[opts.host].getVolume(opts.Name);
+        volume.inspect(Meteor.bindEnvironment(function(err, result) {
+          if (err) {
+            myFuture.throw(err.reason);
+          }
+          else {
+            result._host = opts.host;
+            VolumesInspect.upsert({_host:opts.host,Name:result.Name}, {$set: result});
+            myFuture.return(result);
+          }
+        }));
+        try {
+          return myFuture.wait();
+        }
+        catch (err) {
+          throw new Meteor.Error('docker', err.toString());
+        }
+      }
+    }}
 });

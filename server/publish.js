@@ -141,3 +141,28 @@ Meteor.publishComposite("hostsStatus", {
   }
 });
 
+
+Meteor.publishComposite("volumes_list", {
+  find: function() {
+    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'volume.list']))
+      return null;
+    return Volumes.find();
+  }
+});
+
+Meteor.publishComposite("volume_inspect", function(hostId, name) {
+  return {
+    find: function() {
+      check(hostId, String);
+      check(name, String);
+
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'volume.inspect']))
+        return null;
+      return VolumesInspect.find({
+        _host: hostId,
+        Name: name
+      });
+    }
+  }
+});
+

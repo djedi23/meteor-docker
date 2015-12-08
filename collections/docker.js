@@ -5,6 +5,8 @@ ContainersStats = new Mongo.Collection('docker.containers.stats');
 Hosts = new Mongo.Collection('docker.hosts');
 Images = new Mongo.Collection('docker.images');
 ImagesInspect = new Mongo.Collection('docker.images.inspect');
+Volumes = new Mongo.Collection('docker.volumes');
+VolumesInspect = new Mongo.Collection('docker.volumes.inspect');
 
 modules.collections.Containers = Containers;
 modules.collections.ContainersInspect = ContainersInspect;
@@ -12,6 +14,8 @@ modules.collections.ContainersStats = ContainersStats;
 modules.collections.Hosts = Hosts;
 modules.collections.Images = Images;
 modules.collections.ImagesInspect = ImagesInspect;
+modules.collections.Volumes = Volumes;
+modules.collections.VolumesInspect = VolumesInspect;
 
 
 Meteor.users.deny({
@@ -96,3 +100,28 @@ ImagesInspect.deny({
 	return true;
     }
 });
+
+Volumes.deny({
+    insert: function(userId, doc) {
+	return true;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+        return true;
+    },
+    remove: function() {
+	return true;
+    }
+});
+
+VolumesInspect.deny({
+    insert: function(userId, doc) {
+	return true;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+        return true;
+    },
+    remove: function() {
+	return true;
+    }
+});
+
