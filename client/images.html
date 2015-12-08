@@ -84,14 +84,8 @@
       <h3 class="panel-title">Config</h3>
     </div>
     <div id="containerConfig" class="panel-body collapse">
-	<table class="table table-condensed table-striped">
-	  <tbody>
-	    {{#each configs}}
-	    <tr><td>{{n}}</td><td>{{#if link}}<a href="{{link}}">{{p}}</a>{{/if}}{{#unless link}}{{#if a}}{{> expandArray p}}{{else}}{{p}}{{/if}}{{/unless}}</td></tr>
-	    {{/each}}
-	  </tbody>
-	</table>
-    </div>
+      {{> json config=configsConfiguration}}
+   </div>
   </div>
 
   <div class="panel panel-default">
@@ -139,7 +133,7 @@
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
     <li><a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{IdShort}}</a></li>
     <li class="active">run</li>
-  </ol> 
+  </ol>
   {{#if isInRole 'image.run'}}
   <form class="form-inline">
     <div class="btn-toolbar" role="toolbar" aria-label="...">
@@ -166,12 +160,12 @@
   <div class="row">
   {{> afQuickField name="Entrypoint" template="array" label-class="col-sm-1" input-col-class="col-sm-11"}}
   </div>
-  
+
   <div class="row">
     <div class="col-sm-4">{{> afQuickField name="Tty" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
     <div class="col-sm-4">{{> afQuickField name="PublishAllPorts" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
   </div>
-  
+
   <div class="row">
   {{> afQuickField name="publish" template="publish" label-class="col-sm-1" input-col-class="col-sm-11"}}
   </div>
@@ -198,7 +192,7 @@
     <div class="col-sm-4">{{> afQuickField name="AttachStdin" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
     <div class="col-sm-4">{{> afQuickField name="AttachStdout" template="bootstrap3-horizontal" label-class="col-sm-3" input-col-class="col-sm-6"}}</div>
   </div>
-  <div class="row"> 
+  <div class="row">
     <div class="col-sm-6">{{> afQuickField name="User" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
     <div class="col-sm-6">{{> afQuickField name="WorkingDir" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
   </div>
@@ -214,7 +208,7 @@
     <div class="col-sm-6">{{> afQuickField name="RestartPolicy.MaximumRetryCount" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10"}}</div>
   </div>
 
-  
+
   <div class="form-group">
     <div class="col-sm-offset-1 col-sm-11">
       <button type="submit" class="btn btn-primary">Run</button>
@@ -280,7 +274,7 @@
         <ul class="list-group">
           {{#afEachArrayItem name=this.atts.name minCount=this.atts.minCount maxCount=this.atts.maxCount}}
           <li class="list-group-item autoform-array-item">
-	    <div class="media">      
+	    <div class="media">
 	      {{#if afArrayFieldHasMoreThanMinimum name=../atts.name minCount=../atts.minCount maxCount=../atts.maxCount}}
 	      <div class="media-left">
 		<button type="button" class="btn btn-default autoform-remove-item"><span class="glyphicon glyphicon-minus"></span></button>
@@ -379,7 +373,7 @@
 	    </div>
 	  </form>
 	  {{#autoForm id="imageRemoveForm" doc=config schema="imageRemoveSchemas" type="method" meteormethod="image.rm" template="bootstrap3-horizontal" class="form-horizontal"}}
-	  
+
 	  {{> afQuickField name='force' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
 	  {{> afQuickField name='noprune' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11"}}
 	  {{> afQuickField name='tag' template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" options=removeTagOptions}}

@@ -1,0 +1,43 @@
+<template name="volumeList">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'volumes_list'}}">Volumes</a></li>
+    <li class="active">all</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    <form class="form-inline">
+      {{> hostFilter}} {{#if isInRole 'volume.create'}}<a href="{{pathFor 'volumeCreate'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" style="color:green"></span><span class="hidden-xs"> Create volume</span></a>{{/if}}
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>DRIVER</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if isInRole 'volume.list'}} {{#each this}}
+        <tr>
+          <td>
+            {{#if isInRole 'volume.inspect'}}
+              <a href="{{pathFor 'volumeInspect' host=_host name=Name }}">{{Name}}</a>
+            {{else}}
+              {{Name}}
+            {{/if}}
+          </td>
+          <td>{{Driver}}</td>
+          <td>
+            {{#if isInRole 'volume.remove'}}
+               <button id="bcremove" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="hidden-xs"> remove</span></button>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}} {{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>

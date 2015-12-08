@@ -1,0 +1,22 @@
+<template name="volumeInspect">
+    <ol class="breadcrumb">
+        <li><a href="{{pathFor 'volumes_list'}}">Volumes</a></li>
+        {{#if multihost}}
+        <li>{{hostId}}</li>{{/if}}
+        <li>{{Name}}</li>
+        <li class="active">Inspect</li>
+    </ol>
+
+    <div class="container">
+        <table class="table table-condensed table-striped">
+            <tbody>
+                {{#each slots}}
+                <tr>
+                    <td>{{n}}</td>
+                    <td>{{p}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</template>

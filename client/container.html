@@ -1,4 +1,3 @@
-
 <template name="containers">
   <div class="container-fluid">
   <form class="form-inline">
@@ -116,13 +115,7 @@
       <h3 class="panel-title">Config</h3>
     </div>
     <div id="containerConfig" class="panel-body collapse">
-	<table class="table table-condensed table-striped">
-	  <tbody>
-	    {{#each configs}}
-	    <tr><td>{{n}}</td><td>{{#if link}}<a href="{{link}}">{{p}}</a>{{/if}}{{#unless link}}{{#if a}}{{> expandArray p}}{{else}}{{p}}{{/if}}{{/unless}}</td></tr>
-	    {{/each}}
-	  </tbody>
-	</table>
+      {{> json config=configConfiguration}}
     </div>
   </div>
 
@@ -131,17 +124,11 @@
       <h3 class="panel-title">Network Settings</h3>
     </div>
     <div id="containerNetworkSettings" class="panel-body collapse">
-	<table class="table table-condensed table-striped">
-	  <tbody>
-	    {{#each networkSettings}}
-	    <tr><td>{{n}}</td><td>{{#if link}}<a href="{{link}}">{{p}}</a>{{/if}}{{#unless link}}{{#if a}}{{> expandArray p}}{{else}}{{p}}{{/if}}{{/unless}}</td></tr>
-	    {{/each}}
-	  </tbody>
-	</table>
-    </div>
+      {{> json config=networkSettingsConfiguration}}
+   </div>
   </div>
 
-  
+
   {{#if top}}
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -410,4 +397,21 @@
     {{/if}}
     <input class="form-control" value="{{value}}" placeholder="Filter by Image"/>
   </div>
+</template>
+
+<template name="jsonNetworksValue">
+  <table class="table table-condensed table-striped">
+    <tbody>
+      {{#each value}}
+      <tr>
+        <td>
+          <button class="btn btn-default btn-xs removeContainer "><span class="glyphicon glyphicon-remove"></span></button>
+        </td>
+        <td>
+          <a href="{{pathFor 'networkInspect' host=_host name=Name}}">{{Name}}</a>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </template>

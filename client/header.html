@@ -15,8 +15,8 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="{{isImages}}"><a href="{{pathFor 'images'}}">Images</a></li>
-        <li class="{{isContainers}}"><a href="{{pathFor 'containers'}}">Container</a></li>
+        {{#if isInRole 'image.list'}}<li class="{{isImages}}"><a href="{{pathFor 'images'}}">Images</a></li>{{/if}}
+        {{#if isInRole 'container.list'}}<li class="{{isContainers}}"><a href="{{pathFor 'containers'}}">Container</a></li>{{/if}}
         <li class="{{isHost}}"><a href="{{pathFor 'host'}}">Host {{#if errors}}<span class="label label-danger">error</span>{{/if}}</a></li>
 	{{> runHooks 'template.navbar.left.actions'}}
       </ul>

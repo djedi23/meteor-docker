@@ -1,0 +1,41 @@
+<template name="networkInspect">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'networks_list'}}">Networks</a></li>
+    {{#if multihost}}
+    <li>{{hostId}}</li>{{/if}}
+    <li>{{Name}}</li>
+    <li class="active">Inspect</li>
+  </ol>
+
+  <div class="container">
+    {{#if containers_count}}
+    <form class="form-inline">
+      <div class="form-group">
+        <select id="containerSelect" class="form-control">
+          {{#each containers}}
+          <option value="{{Id}}">{{name}}</option>
+          {{/each}}
+        </select>
+        <button type="button" id="addContainer" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Add</button>
+      </div>
+    </form>
+    {{/if}} {{> json config=networkConfiguration}}
+  </div>
+</template>
+
+<template name="jsonContainerValue">
+  <table class="table table-condensed table-striped">
+    <tbody>
+      {{#each value}}
+      <tr>
+        <td>
+          <button class="btn btn-default btn-xs removeContainer "><span class="glyphicon glyphicon-remove"></span></button>
+        </td>
+        <td>
+          <a href="{{pathFor 'containersInspect' host=_host id=Id}}">{{Names}}</a>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</template>

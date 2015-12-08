@@ -48,7 +48,16 @@ Template.images.helpers({
 });
 
 Template.imageInspect.helpers({
-    Created: function(){
+	configsConfiguration: function() {
+		return {
+			json: this.Config,
+			ignore: ['_id', '_host', 'top', 'logs'],
+			templates: {
+				'Image': 'jsonImageValue'
+			}
+		}
+	},
+  Created: function(){
 	return moment.unix(this.Created).fromNow();
     },
     IdShort: function(){
@@ -71,16 +80,6 @@ Template.imageInspect.helpers({
     },
     multihost: function() {
 	return Hosts.find().count() > 1;
-    },
-    configs: function(){
-	if (this.Config){
-	    var hostId = this._host;
-	    return _.map(_.pairs(this.Config),
-			 function(c){
-			     return filter_content(hostId, {n:c[0],p: c[1]});
-			 });
-	}
-	return null;
     },
     hostId: function() {
 	var host =  Hosts.findOne(this._host);

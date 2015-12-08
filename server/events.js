@@ -1,8 +1,7 @@
 eventHandle = function(host, event){
-  // event attach, commit, copy, exec_create, exec_start, export, oom, rename, resize, top
 /*
 Docker containers report the following events:
-attach, copy, exec_create, exec_start, export, oom, resize, top
+attach, copy, exec_create, exec_start, export, oom, resize
 */
   switch(event.status){
   case 'destroy':
@@ -36,6 +35,8 @@ attach, copy, exec_create, exec_start, export, oom, resize, top
   case 'tag':
     listImages();
     imageDetail(host, event.id);
+    break;
+  case 'top':
     break;
   default:
     console.log("unhandled EVENT",event);

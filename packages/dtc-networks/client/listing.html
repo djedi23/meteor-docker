@@ -1,0 +1,47 @@
+<template name="networkList">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'networks_list'}}">Networks</a></li>
+    <li class="active">all</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    <form class="form-inline">
+      {{> hostFilter}} {{#if isInRole 'network.create'}}<a href="{{pathFor 'networkCreate'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" style="color:green"></span><span class="hidden-xs"> Create network</span></a>{{/if}}
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>ID</th>
+          <th>DRIVER</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if isInRole 'network.list'}} {{#each this}}
+        <tr>
+          <td>
+            {{#if isInRole 'network.inspect'}}
+              <a href="{{pathFor 'networkInspect' host=_host name=Name }}">{{Name}}</a>
+            {{else}}
+              {{Name}}
+            {{/if}}
+          </td>
+          <td>
+              {{IdShort}}
+          </td>
+          <td>{{Driver}}</td>
+          <td>
+            {{#if isInRole 'network.remove'}}
+               <button id="bcremove" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="hidden-xs"> remove</span></button>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}} {{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>
