@@ -275,7 +275,7 @@ imageDetail = function(hostId, imgId){
                });
       image.ContainerConfig.Labels = v;
       v = {};
-      if (image.Config.Labels)
+      if (image.Config && image.Config.Labels) {
         _.each(_.pairs(image.Config.Labels),
 	       function(p){
                  p[0] = p[0].replace(/\./g,'U+FF0E');
