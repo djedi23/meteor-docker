@@ -18,14 +18,12 @@ mrt:filesize
 meteorhacks:subs-manager
 underscore
 gfk:notifications
-meteorhacks:kadira
 djedi:modules
 # accounts-google
 # accounts-github
 accounts-ui
 service-configuration
 reactive-var
-
 percolate:synced-cron
 meteorhacks:sikka
 reywood:publish-composite
@@ -46,3 +44,5 @@ ejson
 spacebars
 check
 ecmascript
+
+dtc-json2table

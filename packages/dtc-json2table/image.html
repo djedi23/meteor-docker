@@ -1,0 +1,4 @@
+<template name="jsonImageValue">
+  {{#if host}}
+  <a href="{{pathFor 'imagesInspect' id=config.json host=host}}">{{config.json}}</a> {{else}} {{config.json}} {{/if}}
+</template>

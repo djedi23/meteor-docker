@@ -1,0 +1,39 @@
+<template name="json">
+  <table class="table table-condensed table-striped">
+    <tbody>
+      {{#each slots}}
+      <tr>
+        <td>{{kv}}</td>
+        <td>
+          {{> Template.dynamic template=template data=val}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</template>
+
+
+<template name="jsonArray">
+  <table class="table table-condensed table-striped">
+    <tbody>
+      {{#if empty}}
+      <tr>
+        <td>[ ]</td>
+      </tr>
+      {{else}} {{#each slots}}
+      <tr>
+        <td>
+          {{> Template.dynamic template=template data=val}}
+        </td>
+      </tr>
+      {{/each}} {{/if}}
+    </tbody>
+  </table>
+</template>
+
+<template name="jsonValue">
+  {{value}}
+</template>
+
+
