@@ -14,18 +14,13 @@ Template.host.helpers({
                          });
         return null;
     },
-    infos: function(){
-	if (this.info){
-	    var hostId = this._id;
-	    var infos = this.info;
-	    delete infos.Images;
-	    delete infos.Containers;
-	    delete infos.Debug;
-	    return _.map(_.pairs(infos),
-			 function(c){
-			     return filter_content(hostId, {n:c[0],p:c[1]});
-			 });
-	}
-	return null;
-    }
+  hostConfiguration:function(){
+    return {
+      json: this.info,
+      ignore:['Images', 'Containers', 'Debug']
+//       templates:{
+//         'Image': 'jsonImageValue'
+//       }
+    };
+  }
 });

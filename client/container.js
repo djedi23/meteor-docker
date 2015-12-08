@@ -164,6 +164,15 @@ Template.containers.events(events);
 
 
 Template.containerInspect.helpers({
+  configConfiguration:function(){
+    return {
+      json: this.Config,
+      ignore:['_id','_host','top','logs'],
+      templates:{
+        'Image': 'jsonImageValue'
+      }
+    };
+  },
   ImageId: function(){
     var image = Images.findOne({RepoTags:this.Image});
     if (image)
@@ -265,16 +274,6 @@ Template.containerInspect.helpers({
   },
   host: function() {
     return this._host;
-  },
-  configs: function(){
-    var hostId = this._host;
-    if (this.Config){
-      return _.map(_.pairs(this.Config),
-                   function(c){
-                     return filter_content(hostId, {n:c[0],p:c[1]});
-                   });
-    }
-    return null;
   },
   networkSettings: function(){
     var hostId = this._host;
@@ -492,3 +491,19 @@ Template.containerImgFilter.helpers({
   }
 });
 Template.containerImgFilter.events(eventsForFilters('containerImgFilter'));
+
+Template.jsonNetworksValue.helpers({
+  value: function(){
+    var self = this.config.json;
+    var ids = _.pairs(self);
+    if (ids.length > 0){
+      var cts = NetworksInspect.find({
+        Name: {
+          $in:_.map(ids, function(e) {
+            return e[0];
+          })}});
+          return cts;
+  }  else
+      return null;
+  }
+});
