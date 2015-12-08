@@ -113,6 +113,14 @@ Meteor.publishComposite("containerInspect", function(hostId, containerId) {
           }
           return null;
         }
+      },
+      {
+        find: function(container) {
+          var query = {};
+          query['Containers.' + container.Id] = {
+            $exists: true
+          };
+          return NetworksInspect.find(query);
         }
       }
     ]
@@ -166,3 +174,26 @@ Meteor.publishComposite("volume_inspect", function(hostId, name) {
   }
 });
 
+Meteor.publishComposite("networks_list", {
+  find: function() {
+    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'network.list']))
+      return null;
+    return Networks.find();
+  }
+});
+
+Meteor.publishComposite("network_inspect", function(hostId, name) {
+  return {
+    find: function() {
+      check(hostId, String);
+      check(name, String);
+
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'network.inspect']))
+        return null;
+      return NetworksInspect.find({
+        _host: hostId,
+        Name: name
+      });
+    }
+  }
+});

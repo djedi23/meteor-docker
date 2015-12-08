@@ -1,0 +1,13 @@
+<template name="networkCreate">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'networks_list'}}">Networks</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li class="active">Create Network</li>
+  </ol>
+
+  {{#if isInRole 'network.create'}}
+  <div class="container">
+    {{> quickForm id="networkCreate" schema="modules.schemas.networkCreateSchemas" doc=config type="method" meteormethod="network.create" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Create" }}
+  </div>
+  {{/if}}
+</template>

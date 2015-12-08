@@ -173,6 +173,17 @@ Template.containerInspect.helpers({
       }
     };
   },
+  networkSettingsConfiguration:function(){
+    var templates = { 'Image': 'jsonImageValue'};
+    if (ensureApi(this._host, "1.21"))
+      templates['Networks'] = 'jsonNetworksValue';
+
+    return {
+      json: this.NetworkSettings,
+      ignore:['_id','_host','top','logs'],
+      templates: templates
+    };
+  },
   ImageId: function(){
     var image = Images.findOne({RepoTags:this.Image});
     if (image)
@@ -275,16 +286,6 @@ Template.containerInspect.helpers({
   host: function() {
     return this._host;
   },
-  networkSettings: function(){
-    var hostId = this._host;
-    if (this.NetworkSettings){
-      return _.map(_.pairs(this.NetworkSettings),
-                   function(c){
-                     return filter_content(hostId, {n:c[0],p:c[1]});
-                   });
-    }
-    return null;
-  },
   Kind: function(){
     if (this.Kind !== undefined){
       var map = ['C','A'];
@@ -334,9 +335,30 @@ Template.containerInspect.helpers({
   }
 });
 
-Template.containerInspect.events(events);
+Template.containerInspect.events(_.extend({
+  'click .removeContainer': function(evt,tpl) {
+    var self = this;
+    var container = Template.parentData(1);
+    var network = self;
 
-Template.containerInspect.onRendered(function(){
+    Meteor.call('network.disconnect', {
+      host: network._host,
+      network: network.Id,
+      container: container.Id
+    }, function(error, result) {
+      $(evt.target).blur();
+      if (error)
+        Notifications.error('docker network connect', error.reason);
+      else {
+        Notifications.success('docker network connect', result);
+        Meteor.call('container.details', container._host, container.Id);
+        Meteor.call('network.inspect', {host: network._host,Name: network.Name});
+        }}
+    );
+  }
+}, events));
+
+Template.containerInspect.onRendered(function() {
   var self = this.data;
   if (self !== null)
     this.hearthbeat = Meteor.setInterval(function() {
