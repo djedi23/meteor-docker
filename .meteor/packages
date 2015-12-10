@@ -6,7 +6,6 @@
 
 audit-argument-checks
 accounts-password
-ongoworks:dockerode
 twbs:bootstrap
 iron:router
 alanning:roles
@@ -50,3 +49,4 @@ dtc-json2table
 dtc-volumes
 dtc-networks
 
+aboire:dockerode
