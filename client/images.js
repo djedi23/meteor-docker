@@ -4,9 +4,14 @@ Template.images.helpers({
 	    return moment.unix(this.Created).fromNow();
 	return null;
     },
+    Id: function(){
+	if (this.Id)
+	    return washImageId(this.Id);
+	return null;
+    },
     IdShort: function(){
 	if (this.Id)
-	    return this.Id.substring(0,12);
+	    return washImageId(this.Id).substring(0,12);
 	return null;
     },
     VirtualSize: function(){
@@ -60,9 +65,14 @@ Template.imageInspect.helpers({
   Created: function(){
 	return moment.unix(this.Created).fromNow();
     },
+    Id: function(){
+	if (this.Id)
+	    return washImageId(this.Id);
+	return null;
+    },
     IdShort: function(){
 	if (this.Id)
-	    return this.Id.substring(0,12);
+	    return washImageId(this.Id).substring(0,12);
 	return null;
     },
     CreatedByShort: function(){
@@ -109,9 +119,14 @@ Template.imageInspect.events({
 });
 
 Template.imageRunParameter.helpers({
+    Id: function(){
+	if (this.Id)
+	    return washImageId(this.Id);
+	return null;
+    },
     IdShort: function(){
 	if (this.Id)
-	    return this.Id.substring(0,12);
+	    return washImageId(this.Id).substring(0,12);
 	return null;
     },
     multihost: function() {
@@ -129,14 +144,14 @@ Template.imageRunParameter.helpers({
 	return null;
     },
     config: function(){
-	var config = modules.call('image.run.parameter.config',this, this._host, this.Id);
+	var config = modules.call('image.run.parameter.config',this, this._host, washImageId(this.Id));
 	if (!config) {
 	    config = {};
 	    var cf = this.Config;
 	    if (!cf)
 		return null;
 	    config.host=this._host;
-	    config.Id=this.Id;
+	    config.Id=washImageId(this.Id);
 	    config.command = cf.Cmd?cf.Cmd[0]:'';
 	    config.args = cf.Cmd?_.rest(cf.Cmd):[];
 	    config.AttachStderr = cf.AttachStderr;
@@ -182,13 +197,18 @@ Template.imageTagParameter.helpers({
 	    return host.Id;
 	return null;
     },
+    Id: function(){
+	if (this.Id)
+	    return washImageId(this.Id);
+	return null;
+    },
     IdShort: function(){
 	if (this.Id)
-	    return this.Id.substring(0,12);
+	    return washImageId(this.Id).substring(0,12);
 	return null;
     },
     config: function(){
-	var config = modules.call('image.tag.parameter.config',this, this._host, this.Id);
+	var config = modules.call('image.tag.parameter.config',this, this._host, washImageId(this.Id));
 	if (!config) {
 	    config = this;
 	}
@@ -207,13 +227,18 @@ Template.imagePushParameter.helpers({
 	    return host.Id;
 	return null;
     },
+    Id: function(){
+	if (this.Id)
+	    return washImageId(this.Id);
+	return null;
+    },
     IdShort: function(){
 	if (this.Id)
-	    return this.Id.substring(0,12);
+	    return washImageId(this.Id).substring(0,12);
 	return null;
     },
     config: function(){
-	var config = modules.call('image.push.parameter.config',this, this._host, this.Id);
+	var config = modules.call('image.push.parameter.config',this, this._host, washImageId(this.Id));
 	if (!config) {
 	    config = this;
 	}
@@ -281,7 +306,7 @@ Template.imageModals.helpers({
 		     });
     },
     config: function(){
-	var config = modules.call('image.remove.parameter.config',this, this._host, this.Id);
+	var config = modules.call('image.remove.parameter.config',this, this._host, washImageId(this.Id));
 	if (!config) {
 	    config = this;
 	}

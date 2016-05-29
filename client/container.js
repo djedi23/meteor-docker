@@ -2,17 +2,17 @@ Template.containers.helpers({
   Image: function() {
     var image = this.Image;
     var ipart = image.split(':');
-    if (/^[0-9a-z]{64}$/.test(ipart[0])) {
+    if (/^[0-9a-z]{64}$/.test(washImageId(ipart[0]))) {
       var image_ = Images.findOne({
         _host: this._host,
-        Id: ipart[0]
+        Id: queryImageId(ipart[0])
       });
       if (image_ && image_.RepoTags[0])
-        return image_.RepoTags[0];
+        return washImageId(image_.RepoTags[0]);
       else
-        return ipart[0].substring(0, 12) + ':' + ipart[1];
+        return washImageId(ipart[0].substring(0, 12) + ':' + ipart[1]);
     } else
-      return image;
+      return washImageId(image);
   },
   ImageId: function() {
     var image_ = this.Image;
@@ -20,7 +20,7 @@ Template.containers.helpers({
     if (/^[0-9a-z]{64}$/.test(ipart[0]))
       var image = Images.findOne({
         _host: this._host,
-        Id: ipart[0]
+        Id: queryImageId(ipart[0])
       });
     else
       image = Images.findOne({
@@ -28,7 +28,7 @@ Template.containers.helpers({
         RepoTags: this.Image
       });
     if (image)
-      return image.Id;
+      return washImageId(image.Id);
     return undefined;
   },
   Names: function() {
@@ -187,7 +187,7 @@ Template.containerInspect.helpers({
   ImageId: function(){
     var image = Images.findOne({RepoTags:this.Image});
     if (image)
-      return image.Id;
+      return washImageId(image.Id);
     return undefined;
   },
   Created: function() {

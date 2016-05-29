@@ -6,7 +6,7 @@ containerStats = {};
 
 checkDockerId = Match.Where(function(x){
                   check(x,String);
-                  return /^[0-9a-z]{64}$/.test(x);
+                  return /^(sha256:)?[0-9a-z]{64}$/.test(x);
                 });
 
 checkHostId = Match.Where(function(x){
@@ -252,13 +252,12 @@ imageDetail = function(hostId, imgId){
   if (docker[hostId] === undefined)
     return;
 
-
-  var img = docker[hostId].getImage(imgId);
+  var img = docker[hostId].getImage(washImageId(imgId));
   if (img) {
     img.inspect(Meteor.bindEnvironment(function (err, image) {
       if (err)
         return;
-      var img = Images.findOne({_host:hostId, Id:image.Id});
+      var img = Images.findOne({_host:hostId, Id: queryImageId(image.Id)});
       if (img)
         image.tags = img.RepoTags;
 
@@ -286,12 +285,15 @@ imageDetail = function(hostId, imgId){
 
       var u = ImagesInspect.upsert({_host:hostId,Id:image.Id}, {$set: image});
     }));
+
+
+    var imgage_ = Images.findOne({_host:hostId, Id:queryImageId(imgId)});
     img.history(Meteor.bindEnvironment(function (err, history) {
       if (err)
         return;
-      var image = {_host:hostId,Id: imgId,
+      var image = {_host:hostId,Id: imgage_.Id,
                    history: history};
-      var u = ImagesInspect.upsert({_host:hostId,Id:imgId}, {$set: image});
+      var u = ImagesInspect.upsert({_host:hostId,Id:imgage_.Id}, {$set: image});
     }));
   }
 };
@@ -634,7 +636,7 @@ Meteor.methods({
     check(hostId, checkHostId);
     if (! Roles.userIsInRole(Meteor.user(), ['admin','image.view']))
       throw new Meteor.Error(403, "Not authorized to view images");
-    imageDetail(hostId, imgId);
+    imageDetail(hostId, washImageId(imgId));
   },
   'image.pull': function(params,a,b){
     check(params,pullSchemas);
@@ -656,7 +658,7 @@ Meteor.methods({
             function(chunk){
               var status = JSON.parse(chunk);
               if (status.id){
-                status.Id = status.id;
+                status.Id = washImageId(status.id);
                 status._host=params.host;
                 if (status.status === 'Download complete')
                   Images.remove({_host:params.host, Id:status.Id});
@@ -691,7 +693,7 @@ Meteor.methods({
               var status = JSON.parse(chunk);
               console.log("chunk",status);
               if (status.id){
-                status.Id = status.id;
+                status.Id = washImageId(status.id);
                 status._host=params.host;
                 // if (status.status === 'Download complete')
                 //     Images.remove({_host:params.host, Id:status.Id});
@@ -766,7 +768,7 @@ Meteor.methods({
 
       Future = Npm.require('fibers/future');
       var myFuture = new Future();
-      docker[params.host].run(params.id,command, [process.stdout, process.stderr], create_options,  start_options,
+      docker[params.host].run(washImageId(params.id),command, [process.stdout, process.stderr], create_options,  start_options,
         function (err, result,container) {
         }).on('container',
           function (container) {
@@ -789,6 +791,7 @@ Meteor.methods({
 
     if (opts.tag)
       opts.id = opts.tag;
+    opts.id = washImageId(opts.id);
     imageCall(opts,'remove');
   },
   'image.tag':function(opts,a,b){
@@ -798,6 +801,7 @@ Meteor.methods({
     check(b,Match.Any);
     if (! Roles.userIsInRole(Meteor.user(), ['admin','image.tag']))
       throw new Meteor.Error(403, "Not authorized to tag image");
+    opts.id = washImageId(opts.id);
     imageCall(opts,'tag');
   },
   'volume.list': function(){

@@ -56,7 +56,7 @@ Meteor.publishComposite("imageInspect", function(hostId, imgId) {
 
       return ImagesInspect.find({
         _host: hostId,
-        Id: imgId
+        Id: queryImageId(imgId)
       });
     }
   }
