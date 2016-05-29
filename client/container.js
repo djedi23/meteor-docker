@@ -359,14 +359,7 @@ Template.containerInspect.events(_.extend({
 }, events));
 
 Template.containerInspect.onRendered(function() {
-  var self = this.data;
-  if (self !== null)
-    this.hearthbeat = Meteor.setInterval(function() {
-      Meteor.apply('container.details', [self._host, self.Id], {
-        wait: true
-      });
-    }, 2000);
-
+  var thiz = this;
   this.autorun(function() {
     var self = Template.currentData();
     if (self)
@@ -379,12 +372,22 @@ Template.containerInspect.onRendered(function() {
           Router.go('containers');
         }
       });
+
+    if (self && !thiz.hearthbeat ){
+      thiz.hearthbeat = Meteor.setInterval(function() {
+        Meteor.apply('container.details', [self._host, self.Id], {
+          wait: true
+        });
+      }, 5000);
+      selfFlag = self;
+    }
   });
 });
 
 Template.containerInspect.onDestroyed(function() {
-  if (this.hearthbeat)
+  if (this.hearthbeat){
     Meteor.clearInterval(this.hearthbeat);
+  }
 });
 
 
