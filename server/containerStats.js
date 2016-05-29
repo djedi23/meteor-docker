@@ -23,17 +23,20 @@ startMonitoringContainer = function(hostId, containerId){
         return;
       }
 
+      var buffer='';
       containerStats[containerId] = {stream: stream, status:1};
       stream.on('data', Meteor.bindEnvironment(
         function(chunk){
           try{
-            var stat = JSON.parse(chunk);
+            buffer += chunk;
+            var stat = JSON.parse(buffer);
             stat.Id = containerId;
             stat._host = hostId;
             stat.read = moment(stat.read).millisecond(0).toDate();
             ContainersStats.upsert({Id:stat.Id, _host: stat._host, read: stat.read}, stat);
+            buffer ='';
           } catch(err){
-            console.log('error during stats: ', err, chunk.toString());
+            //console.log('error during stats: ', err, chunk.toString());
           }
         })).
         on('end', Meteor.bindEnvironment(function(){
