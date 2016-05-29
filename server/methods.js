@@ -371,7 +371,7 @@ Meteor.methods({
 
           var buffer="";
           logsStream.on('data', function(chunk){
-            buffer += chunk.toString();
+            buffer += chunk.slice(8).toString(); // https://github.com/docker/docker/issues/8223
           }).on('end', Meteor.bindEnvironment(function(){
                          var logs = {logs: buffer};
                          var u = ContainersInspect.update({_host:hostId, Id:containerId}, {$set: logs});
