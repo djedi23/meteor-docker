@@ -1,7 +1,6 @@
-FROM node:0.10.40
+FROM node:4.4.7
 
-MAINTAINER https://github.com/djedi23
-
+MAINTAINER moise.valvassori@gmail.com 
  
 WORKDIR /opt/bundle/
 # ENV MONGO_URL mongodb://$MONGO_PORT_27017_TCP_ADDR:$MONGO_PORT_27017_TCP_PORT/meteor
@@ -16,9 +15,12 @@ ENV PORT 3000
 
 ## This is your app built with `meteor build`
 ADD app.tar.gz /opt/
+#RUN (cd /opt/bundle/programs/server && rm -rf npm/npm-bcrypt && npm install bcrypt && npm install && rm -rf /tmp/*)
 RUN (cd /opt/bundle/programs/server && npm install && rm -rf /tmp/*)
 
-# ENV ROOT_URL http://dtc.xxxx.com/
+LABEL dtc=dtc
+
+ENV ROOT_URL http://dtc.valvassori.info/
 
 EXPOSE 3000
 CMD node main.js --raw-logs
