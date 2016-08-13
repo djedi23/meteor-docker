@@ -1,0 +1,45 @@
+<template name="tasksList">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'tasks_list'}}">Tasks</a></li>
+    <li class="active">all</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    <form class="form-inline">
+      {{> hostFilter}}
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+	  {{#if multihost}}<th>HOST</th>{{/if}}
+          <th class="hidden-sm">ID</th>
+          <th>NODE</th>
+          <th>SERVICE</th>
+          <th>CONTAINER</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if isInRole 'tasks.list'}} {{#each this}}
+        <tr>
+	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
+          <td>
+            {{#if isInRole 'tasks.inspect'}}
+              <a href="{{pathFor 'tasksInspect' host=_host id=ID }}">{{ID}}</a>
+            {{else}}
+              {{ID}}
+            {{/if}}
+          </td>
+          <td><a href="{{pathFor 'nodesInspect' host=_host id=NodeID}}">{{Node}}</a></td>
+          <td><a href="{{pathFor 'servicesInspect' host=_host id=ServiceID}}">{{Service}}</a></td>
+          <td>{{#if canLinkContainer}}<a href="{{pathFor 'containersInspect' host=ContainerHost id=Status.ContainerStatus.ContainerID}}">{{Container}}</a>{{else}}{{Container}}{{/if}}</td>
+          <td><span class="label {{StatusClass}}">{{Status.State}}</span></td>
+        </tr>
+        {{/each}} {{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>

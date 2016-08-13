@@ -52,6 +52,7 @@ dtc-volumes
 dtc-networks
 dtc-nodes
 dtc-services
+dtc-tasks
 
 standard-minifier-css
 standard-minifier-js

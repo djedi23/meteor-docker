@@ -246,6 +246,51 @@ Meteor.publishComposite("services_inspect", function(hostId, id) {
     }
   }
 });
+
+
+Meteor.publishComposite("tasks_list", {
+  find: function() {
+    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'tasks.list']))
+      return null;
+    return Tasks.find();
+  },
+  children: [
+    {
+      find: function(task){
+        return Nodes.find({ID:task.NodeID},{fields:{ID:1,_host:1,'Description.Hostname':1}});
+      }
+    },
+    {
+      find: function(task){
+        return Services.find({ID:task.ServiceID},{fields:{ID:1,_host:1,'Spec.Name':1}});
+      }
+    },
+    {
+      find: function(task){
+        return Containers.find({Id:task.Status.ContainerStatus.ContainerID},{fields:{Id:1,_host:1,'Names':1}});
+      }
+    }
+  ]
+});
+
+Meteor.publishComposite("tasks_inspect", function(hostId, id) {
+  return {
+    find: function() {
+      check(hostId, String);
+      check(id, String);
+
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'tasks.inspect']))
+        return null;
+      return TasksInspect.find({
+        _host: hostId,
+        ID: id
+      });
+    }
+  }
+});
+
+
+
 const LISTS_PUBLISH = _.pluck([
   "images",
   "containers",
@@ -262,6 +307,8 @@ const LISTS_PUBLISH = _.pluck([
   "nodes_inspect",
   "services_list",
   "services_inspect",
+  "tasks_list",
+  "tasks_inspect",
 ], 'name');
 DDPRateLimiter.addRule({
   type:'subscription',
