@@ -34,7 +34,8 @@ attach, copy, exec_create, exec_start, export, oom, resize
   case 'untag':
   case 'tag':
     listImages();
-    imageDetail(host, event.id);
+    if (modules.hostIdRegExp.test(event.id))
+      imageDetail(host, event.id);
     break;
   case 'top':
     break;

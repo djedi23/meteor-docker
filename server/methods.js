@@ -305,7 +305,10 @@ var containerCall = function(opts, fct) {
 
     var container = docker[opts.host].getContainer(opts.id);
     if (container){
-      container[fct].call(container, opts, function (err, result) {
+      var callopts = opts;
+      delete callopts.id;
+      delete callopts.host;
+      container[fct].call(container, callopts, function (err, result) {
         if (err){
           console.log(err);
           myFuture.throw(err.json?err.json:(err.reason?err.reason:err));
@@ -327,7 +330,10 @@ var imageCall = function(opts, fct) {
     var myFuture = new Future();
 
     var image = docker[opts.host].getImage(opts.id);
-    image[fct].call(image, opts, function (err, result) {
+    var callopts = opts;
+    delete callopts.id;
+    delete callopts.host;
+    image[fct].call(image, callopts, function (err, result) {
       if (err){
         myFuture.throw(err.reason);
       } else
