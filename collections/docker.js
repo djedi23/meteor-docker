@@ -11,6 +11,8 @@ Networks = new Mongo.Collection('docker.networks');
 NetworksInspect = new Mongo.Collection('docker.networks.inspect');
 Nodes = new Mongo.Collection('docker.nodes');
 NodesInspect = new Mongo.Collection('docker.nodess.inspect');
+Services = new Mongo.Collection('docker.services');
+ServicesInspect = new Mongo.Collection('docker.services.inspect');
 
 
 
@@ -26,6 +28,8 @@ modules.collections.Networks = Networks;
 modules.collections.NetworksInspect = NetworksInspect;
 modules.collections.Nodes = Nodes;
 modules.collections.NodesInspect = NodesInspect;
+modules.collections.Services = Services;
+modules.collections.ServicesInspect = ServicesInspect;
 
 
 Meteor.users.deny({
@@ -172,6 +176,30 @@ Nodes.deny({
 });
 
 NodesInspect.deny({
+    insert: function(userId, doc) {
+	return true;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+        return true;
+    },
+    remove: function() {
+	return true;
+    }
+});
+
+Services.deny({
+    insert: function(userId, doc) {
+	return true;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+        return true;
+    },
+    remove: function() {
+	return true;
+    }
+});
+
+ServicesInspect.deny({
     insert: function(userId, doc) {
 	return true;
     },

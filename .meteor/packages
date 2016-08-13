@@ -51,6 +51,7 @@ dtc-json2table
 dtc-volumes
 dtc-networks
 dtc-nodes
+dtc-services
 
 standard-minifier-css
 standard-minifier-js

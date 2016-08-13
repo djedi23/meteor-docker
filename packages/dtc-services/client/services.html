@@ -1,0 +1,6 @@
+<template name="services_header">
+  {{#if isInRole 'services.list'}}<li class="{{isActive}} visible-lg"><a href="{{pathFor 'services_list'}}">Services</a></li>{{/if}}
+</template>
+<template name="services_header2">
+  {{#if isInRole 'services.list'}}<li class="{{isActive}}"><a href="{{pathFor 'services_list'}}">Services</a></li>{{/if}}
+</template>

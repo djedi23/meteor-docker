@@ -1,0 +1,62 @@
+<template name="servicesList">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'services_list'}}">Services</a></li>
+    <li class="active">all</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    <form class="form-inline">
+      {{> hostFilter}} {{#if isInRole 'services.create'}}<a href="{{pathFor 'servicesCreate'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" style="color:green"></span><span class="hidden-xs"> Create service</span></a>{{/if}}
+    </form>
+  </div>
+
+
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+	  {{#if multihost}}<th>HOST</th>{{/if}}
+          <th class="hidden-sm">ID</th>
+          <th>NAME</th>
+          <th>IMAGE</th>
+          <th>ARGS</th>
+          <th>REPLICAS</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if isInRole 'services.list'}} {{#each this}}
+        <tr>
+	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
+          <td class="hidden-sm">
+            {{#if isInRole 'services.inspect'}}
+              <a href="{{pathFor 'servicesInspect' host=_host id=ID }}">{{ID}}</a>
+            {{else}}
+              {{ID}}
+            {{/if}}
+          </td>
+          <td class="visible-sm">
+            {{#if isInRole 'services.inspect'}}
+              <a href="{{pathFor 'servicesInspect' host=_host id=ID }}">{{Spec.Name}}</a>
+            {{else}}
+              {{Spec.Name}}
+            {{/if}}
+          </td>
+          <td class="hidden-sm">{{Spec.Name}}</td>
+          <td>{{Spec.TaskTemplate.ContainerSpec.Image}}</td>
+          <td>{{Spec.TaskTemplate.ContainerSpec.Args}}</td>
+          <td>{{Spec.Mode.Replicated.Replicas}}</td>
+          <td>
+            {{#if isInRole 'services.remove'}}
+               <button id="bcremove" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="hidden-xs"> remove</span></button>
+            {{/if}}
+            {{#if isInRole 'services.update'}}
+               <a type="button" class="btn btn-default btn-xs" href="{{pathFor 'servicesUpdate' host=_host id=ID }}"><span class="glyphicon glyphicon-pencil green"></span><span class="hidden-xs"> update</span></a>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}} {{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>
