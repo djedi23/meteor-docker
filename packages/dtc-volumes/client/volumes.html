@@ -1,3 +1,6 @@
 <template name="volume_header">
-  {{#if isInRole 'volume.list'}}<li class="{{isVolume}}"><a href="{{pathFor 'volumes_list'}}">Volumes</a></li>{{/if}}
+  {{#if isInRole 'volume.list'}}<li class="{{isActive}} visible-lg"><a href="{{pathFor 'volumes_list'}}">Volumes</a></li>{{/if}}
+</template>
+<template name="volume_header2">
+  {{#if isInRole 'volume.list'}}<li class="{{isActive}}"><a href="{{pathFor 'volumes_list'}}">Volumes</a></li>{{/if}}
 </template>

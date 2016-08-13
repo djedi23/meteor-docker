@@ -19,6 +19,16 @@
         {{#if isInRole 'container.list'}}<li class="{{isContainers}}"><a href="{{pathFor 'containers'}}">Container</a></li>{{/if}}
         <li class="{{isHost}}"><a href="{{pathFor 'host'}}">Host {{#if errors}}<span class="label label-danger">error</span>{{/if}}</a></li>
 	{{> runHooks 'template.navbar.left.actions'}}
+	{{#each menus}}
+	<li class="dropdown hidden-lg {{isActive}}">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{itemTitle}}<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+	    {{#each menuItems}}
+	     {{> Template.dynamic template=this data=../..}}
+	    {{/each}}
+          </ul>
+        </li>
+	{{/each}}
       </ul>
       <ul class="nav navbar-nav navbar-right">
 	{{> runHooks 'template.navbar.right.actions'}}

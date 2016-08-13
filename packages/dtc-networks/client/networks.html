@@ -1,3 +1,6 @@
 <template name="network_header">
-  {{#if isInRole 'network.list'}}<li class="{{isNetwork}}"><a href="{{pathFor 'networks_list'}}">Networks</a></li>{{/if}}
+  {{#if isInRole 'network.list'}}<li class="{{isActive}} visible-lg"><a href="{{pathFor 'networks_list'}}">Networks</a></li>{{/if}}
+</template>
+<template name="network_header2">
+  {{#if isInRole 'network.list'}}<li class="{{isActive}}"><a href="{{pathFor 'networks_list'}}">Networks</a></li>{{/if}}
 </template>
