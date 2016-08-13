@@ -14,6 +14,7 @@
     <table class="table table-condensed table-striped">
       <thead>
         <tr>
+	  {{#if multihost}}<th>HOST</th>{{/if}}
           <th>NAME</th>
           <th>ID</th>
           <th>DRIVER</th>
@@ -23,6 +24,7 @@
       <tbody>
         {{#if isInRole 'network.list'}} {{#each this}}
         <tr>
+	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
           <td>
             {{#if isInRole 'network.inspect'}}
               <a href="{{pathFor 'networkInspect' host=_host name=Name }}">{{Name}}</a>

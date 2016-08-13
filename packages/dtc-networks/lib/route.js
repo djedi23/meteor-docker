@@ -2,7 +2,10 @@ Router.route('/networks', {
   name: 'networks_list',
   template: 'networkList',
   data: function() {
-    return modules.collections.Networks.find();
+    var filter = {};
+    if (Session.get('hostFilter'))
+      filter = _.extend(filter,{_host:Session.get('hostFilter')});
+    return modules.collections.Networks.find(filter);
   },
   onRun: function() {
     Meteor.call('network.list', function() {});
