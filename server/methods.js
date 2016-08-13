@@ -268,7 +268,7 @@ imageDetail = function(hostId, imgId){
       v = {};
       if (image.ContainerConfig.Labels)
         _.each(_.pairs(image.ContainerConfig.Labels),
-	       function(p){
+               function(p){
                  p[0] = p[0].replace(/\./g,'U+FF0E');
                  v[p[0]] = p[1];
                });
@@ -276,7 +276,7 @@ imageDetail = function(hostId, imgId){
       v = {};
       if (image.Config && image.Config.Labels) {
         _.each(_.pairs(image.Config.Labels),
-	       function(p){
+               function(p){
                  p[0] = p[0].replace(/\./g,'U+FF0E');
                  v[p[0]] = p[1];
                });
@@ -892,3 +892,42 @@ Meteor.methods({
       }
     }}
 });
+
+
+const LISTS_METHODS = _.pluck([
+  'dtcVersion',
+  'container.details',
+  'containers.list',
+  'container.pause',
+  'container.unpause',
+  'container.restart',
+  'container.start',
+  'container.rm',
+  'container.kill',
+  'container.stop',
+  'container.rename',
+  'container.commit',
+  'container.exec.create',
+  'host.details',
+  'host.new',
+  'host.rm',
+  'host.rename',
+  'host.enable',
+  'images.list',
+  'image.details',
+  'image.pull',
+  'image.push',
+  'image.run',
+  'image.rm',
+  'image.tag',
+  'volume.list',
+  'volume.create',
+  'volume.remove',
+  'volume.inspect'
+], 'name');
+DDPRateLimiter.addRule({
+  name(name) {
+    return _.contains(LISTS_METHODS, name);
+  },
+  connectionId() { return true; }
+}, 5, 1000);

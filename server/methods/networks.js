@@ -8,6 +8,16 @@ var cleanDot = function(network) {
       });
   network.Options = o;
 
+
+  if (network.Labels)
+    _.each(_.pairs(network.Labels),
+      function(p) {
+        p[0] = p[0].replace(/\./g, 'U+FF0E');
+        o[p[0]] = p[1];
+      });
+  network.Labels = o;
+
+
   return network;
 }
 
@@ -19,12 +29,12 @@ listNetworks = function() {
     if (ensureApi(hostId, '1.21')) {
       var list = {};
       _.each(Networks.find({
-          _host: hostId
-        }, {
-          fields: {
-            Name: 1
-          }
-        }).fetch(),
+        _host: hostId
+      }, {
+        fields: {
+          Name: 1
+        }
+      }).fetch(),
         function(e) {
           list[e.Name] = 1;
         });
@@ -144,21 +154,21 @@ Meteor.methods({
         var myFuture = new Future();
         var network = docker[opts.host].getNetwork(opts.Name);
         network.inspect(Meteor.bindEnvironment(function(err, result) {
-          if (err) {
-            myFuture.throw(err.reason);
-          }
-          else {
-            result._host = opts.host;
-            result = cleanDot(result);
-            NetworksInspect.upsert({
-              _host: opts.host,
-              Name: result.Name
-            }, {
-              $set: result
-            });
-            myFuture.return(result);
-          }
-        }));
+                          if (err) {
+                            myFuture.throw(err.reason);
+                          }
+                          else {
+                            result._host = opts.host;
+                            result = cleanDot(result);
+                            NetworksInspect.upsert({
+                              _host: opts.host,
+                              Name: result.Name
+                            }, {
+                              $set: result
+                            });
+                            myFuture.return(result);
+                          }
+                        }));
         try {
           return myFuture.wait();
         }
@@ -185,12 +195,12 @@ Meteor.methods({
         network.connect({
           Container: opts.container
         }, function(err, result) {
-          if (err) {
-            myFuture.throw(err.reason);
-          }
-          else
-            myFuture.return(result);
-        });
+             if (err) {
+               myFuture.throw(err.reason);
+             }
+             else
+               myFuture.return(result);
+           });
         try {
           return myFuture.wait();
         }
@@ -217,12 +227,12 @@ Meteor.methods({
         network.disconnect({
           Container: opts.container
         }, function(err, result) {
-          if (err) {
-            myFuture.throw(err.reason);
-          }
-          else
-            myFuture.return(result);
-        });
+             if (err) {
+               myFuture.throw(err.reason);
+             }
+             else
+               myFuture.return(result);
+           });
         try {
           return myFuture.wait();
         }
@@ -233,3 +243,19 @@ Meteor.methods({
     }
   }
 });
+
+
+const LISTS_METHODS = _.pluck([
+  'network.list',
+  'network.create',
+  'network.remove',
+  'network.inspect',
+  'network.connect',
+  'network.disconnect'
+], 'name');
+DDPRateLimiter.addRule({
+  name(name) {
+    return _.contains(LISTS_METHODS, name);
+  },
+  connectionId() { return true; }
+}, 5, 1000);

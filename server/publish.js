@@ -2,8 +2,8 @@ hostEnabled = function() {
   return Hosts.find({
     disabled: 'disabled'
   }).map(function(h) {
-    return h._id;
-  });
+           return h._id;
+         });
 };
 
 hostEnabledCriteria = function() {
@@ -197,3 +197,25 @@ Meteor.publishComposite("network_inspect", function(hostId, name) {
     }
   }
 });
+
+
+const LISTS_PUBLISH = _.pluck([
+  "images",
+  "containers",
+  "imageInspect",
+  "containerInspect",
+  "hosts",
+  "hostsStatus",
+  "hostsStatus",
+  "volumes_list",
+  "volume_inspect",
+  "networks_list",
+  "network_inspect",
+], 'name');
+DDPRateLimiter.addRule({
+  type:'subscription',
+  name(name) {
+    return _.contains(LISTS_PUBLISH, name);
+  },
+  connectionId() { return true; }
+}, 5, 1000);
