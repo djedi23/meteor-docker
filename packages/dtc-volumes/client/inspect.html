@@ -1,8 +1,7 @@
 <template name="volumeInspect">
     <ol class="breadcrumb">
         <li><a href="{{pathFor 'volumes_list'}}">Volumes</a></li>
-        {{#if multihost}}
-        <li>{{hostId}}</li>{{/if}}
+        {{#if multihost}}<li>{{hostId}}</li>{{/if}}
         <li>{{Name}}</li>
         <li class="active">Inspect</li>
     </ol>

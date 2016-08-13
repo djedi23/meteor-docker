@@ -2,7 +2,10 @@ Router.route('/volumes', {
   name: 'volumes_list',
   template: 'volumeList',
   data: function() {
-    return modules.collections.Volumes.find();
+    var filter = {};
+    if (Session.get('hostFilter'))
+      filter = _.extend(filter,{_host:Session.get('hostFilter')});
+    return modules.collections.Volumes.find(filter);
   },
   onRun: function() {
     Meteor.call('volume.list', function() {});

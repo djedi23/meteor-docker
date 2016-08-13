@@ -1,15 +1,18 @@
 Template.volumeCreate.helpers({
+  multihost: function() {
+    return Hosts.find().count() > 1;
+  },
   hostId: function() {
-    var host = Hosts.findOne(this._host);
-    if (host)
+    var host = Hosts.findOne(Session.get('hostFilter'));
+    if (host && Session.get('hostFilter'))
       return host.Id;
     return null;
   },
   config: function() {
     var config = {};
-    var host = Hosts.findOne();
+    var host = Session.get('hostFilter') && Hosts.findOne(Session.get('hostFilter'));
     if (host)
-      config.host = host._id; // FIXME : this._host;
+      config.host = host._id;
     config.Driver='local';
     return config;
   }

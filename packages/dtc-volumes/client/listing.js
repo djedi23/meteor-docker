@@ -1,3 +1,18 @@
+
+Template.volumeList.helpers({
+  multihost: function() {
+    return Hosts.find().count() > 1;
+  },
+  hostId: function() {
+    var host =  Hosts.findOne(this._host);
+    if (host)
+      return host.Id;
+    return null;
+  }
+});
+
+
+
 Template.volumeList.events({
   'click #bcremove': function(evt, tpl) {
     var opts = {
