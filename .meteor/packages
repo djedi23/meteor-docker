@@ -7,7 +7,6 @@
 msavin:mongol
 audit-argument-checks@1.0.7
 accounts-password@1.2.12
-ongoworks:dockerode
 twbs:bootstrap
 iron:router
 alanning:roles
@@ -47,6 +46,7 @@ check@1.2.3
 ecmascript@0.5.7
 
 
+dtc-dockerode
 dtc-json2table
 dtc-volumes
 dtc-networks

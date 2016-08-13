@@ -1,0 +1,1 @@
+Docker = Npm.require('dockerode');
