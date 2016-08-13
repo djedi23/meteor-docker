@@ -1,0 +1,58 @@
+<template name="nodesList">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'nodes_list'}}">Nodes</a></li>
+    <li class="active">all</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    <form class="form-inline">
+      {{> hostFilter}} {{#if isInRole 'nodes.create'}}<a href="{{pathFor 'nodesCreate'}}" role="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" style="color:green"></span><span class="hidden-xs"> Create node</span></a>{{/if}}
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+	  {{#if multihost}}<th>HOST</th>{{/if}}
+          <th class="hidden-sm">ID</th>
+          <th>HOSTNAME</th>
+          <th>STATUS</th>
+          <th>AVAILABILITY</th>
+          <th>ROLE</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if isInRole 'nodes.list'}} {{#each this}}
+        <tr>
+	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
+          <td class="hidden-sm">
+            {{#if isInRole 'nodes.inspect'}}
+              <a href="{{pathFor 'nodesInspect' host=_host id=ID }}">{{ID}}</a>
+            {{else}}
+              {{ID}}
+            {{/if}}
+          </td>
+          <td class="visible-sm">
+            {{#if isInRole 'nodes.inspect'}}
+              <a href="{{pathFor 'nodesInspect' host=_host id=ID }}">{{Description.Hostname}}</a>
+            {{else}}
+              {{Description.Hostname}}
+            {{/if}}
+          </td>
+          <td class="hidden-sm">{{Description.Hostname}}</td>
+          <td><span class="label {{StatusClass}}">{{Status.State}}</span></td>
+          <td><span class="label {{AvailabilityClass}}">{{Spec.Availability}}</span></td>
+          <td>{{Spec.Role}}</td>
+          <td>
+            {{#if isInRole 'nodes.remove'}}
+               <button id="bcremove" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-remove"></span><span class="hidden-xs"> remove</span></button>
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}} {{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>

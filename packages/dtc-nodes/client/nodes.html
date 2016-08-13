@@ -1,0 +1,6 @@
+<template name="nodes_header">
+  {{#if isInRole 'nodes.list'}}<li class="{{isActive}} visible-lg"><a href="{{pathFor 'nodes_list'}}">Nodes</a></li>{{/if}}
+</template>
+<template name="nodes_header2">
+  {{#if isInRole 'nodes.list'}}<li class="{{isActive}}"><a href="{{pathFor 'nodes_list'}}">Nodes</a></li>{{/if}}
+</template>

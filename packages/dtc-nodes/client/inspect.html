@@ -1,0 +1,12 @@
+<template name="nodesInspect">
+    <ol class="breadcrumb">
+        <li><a href="{{pathFor 'nodes_list'}}">Nodes</a></li>
+        {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+        <li>{{ID}}</li>
+        <li class="active">Inspect</li>
+    </ol>
+
+    <div class="container">
+      {{ > json config=node}}
+    </div>
+</template>

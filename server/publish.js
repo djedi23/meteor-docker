@@ -199,6 +199,30 @@ Meteor.publishComposite("network_inspect", function(hostId, name) {
 });
 
 
+Meteor.publishComposite("nodes_list", {
+  find: function() {
+    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'nodes.list']))
+      return null;
+    return Nodes.find();
+  }
+});
+
+Meteor.publishComposite("nodes_inspect", function(hostId, id) {
+  return {
+    find: function() {
+      check(hostId, String);
+      check(id, String);
+
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'nodes.inspect']))
+        return null;
+      return NodesInspect.find({
+        _host: hostId,
+        ID: id
+      });
+    }
+  }
+});
+
 const LISTS_PUBLISH = _.pluck([
   "images",
   "containers",
@@ -211,6 +235,8 @@ const LISTS_PUBLISH = _.pluck([
   "volume_inspect",
   "networks_list",
   "network_inspect",
+  "nodes_list",
+  "nodes_inspect",
 ], 'name');
 DDPRateLimiter.addRule({
   type:'subscription',
