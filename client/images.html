@@ -26,7 +26,7 @@
 	{{#each this}}
 	<tr>
 	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
-	  <td>{{#if status}}{{status}}{{/if}}{{#unless status}}<a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{RepoTags}}</a>{{/unless}}</td>
+	  <td>{{#if status}}{{status}}{{/if}}{{#unless status}}<a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{#each RepoTags}}{{this}}<br/>{{/each}}</a>{{/unless}}</td>
 	  <td class="hidden-xs">{{#unless status}}{{IdShort}}{{/unless}}</td>
 	  <td>{{#if progressDetail.start}}{{progressStart}}{{/if}}{{#unless status}}{{Created}}{{/unless}}</td>
 	  <td>{{#if progressDetail.total}}<div class="progress"><div class="progress-bar" role="progressbar" aria-valuenow="{{progressDetail.current}}" aria-valuemin="0" aria-valuemax="{{progressDetail.total}}" style="width:{{progress}}%"></div></div>{{/if}}{{#unless status}}{{VirtualSize}}{{/unless}}</td>
@@ -129,7 +129,7 @@
 <template name="imageRunParameter">
 <div class="container">
   <ol class="breadcrumb">
-    <li><a href="/">Images</a></li>
+    <li><a href="{{pathFor 'images'}}">Images</a></li>
     {{#if multihost}}<li>{{hostId}}</li>{{/if}}
     <li><a href="{{pathFor 'imagesInspect' id=Id host=_host}}">{{IdShort}}</a></li>
     <li class="active">run</li>

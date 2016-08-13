@@ -22,4 +22,3 @@ eventsForFilters = function(sessionname) {
     }
   };
 };
-

@@ -24,7 +24,7 @@
 	<tr>
 	  {{#if multihost}}<td>{{hostId}}</td>{{/if}}
 	  {{> runHooks 'template.container.table.prextra.data'}}
-	  <td><a href="{{pathFor 'containersInspect' id=Id host=_host}}" title="{{NamesFull}}">{{Names}}</a></td>
+	  <td><a href="{{pathFor 'containersInspect' id=Id host=_host}}">{{#each Names}}{{this}}<br/>{{/each}}</a></td>
 	  <td class="hidden-xs">{{IdShort}}</td>
 	  <td class="hidden-xs"><a href="{{pathFor 'imagesInspect' id=ImageId host=_host}}">{{Image}}</a></td>
 	  <td class="hidden-xs">{{Command}}</td>

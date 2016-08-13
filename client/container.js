@@ -1,22 +1,27 @@
 Template.containers.helpers({
   Image: function() {
-    var image = this.Image;
+    var image = washImageId(this.Image);
     var ipart = image.split(':');
-    if (/^[0-9a-z]{64}$/.test(washImageId(ipart[0]))) {
+    if (/^[0-9a-z]{64}$/.test(ipart[0])) {
       var image_ = Images.findOne({
         _host: this._host,
-        Id: queryImageId(ipart[0])
+        Id: ipart[0]
       });
       if (image_ && image_.RepoTags[0])
         return washImageId(image_.RepoTags[0]);
-      else
-        return washImageId(ipart[0].substring(0, 12) + ':' + ipart[1]);
+      else {
+        if (ipart.length >1)
+          return ipart[0].substring(0, 12) + ':' + ipart[1];
+        else
+          return ipart[0].substring(0, 12);
+      }
     } else
-      return washImageId(image);
+      return image;
   },
   ImageId: function() {
-    var image_ = this.Image;
+    var image_ = washImageId(this.Image);
     var ipart = image_.split(':');
+
     if (/^[0-9a-z]{64}$/.test(ipart[0]))
       var image = Images.findOne({
         _host: this._host,
@@ -25,25 +30,25 @@ Template.containers.helpers({
     else
       image = Images.findOne({
         _host: this._host,
-        RepoTags: this.Image
+        RepoTags: queryImageId(image_)
       });
     if (image)
       return washImageId(image.Id);
     return undefined;
   },
-  Names: function() {
-    if (this.Names)
-      if (this.Names.toString().length > 40)
-        return this.Names.toString().substring(0, 40) + " ...";
-      else
-        return this.Names;
-    return null;
-  },
-  NamesFull: function() {
-    if (this.Names)
-      return this.Names;
-    return null;
-  },
+//   Names: function() {
+//     if (this.Names)
+//       if (this.Names.toString().length > 40)
+//         return this.Names.toString().substring(0, 40) + " ...";
+//       else
+//         return this.Names;
+//     return null;
+//   },
+//   NamesFull: function() {
+//     if (this.Names)
+//       return this.Names;
+//     return null;
+//   },
   Created: function() {
     if (this.Created)
       return moment.unix(this.Created).fromNow();
