@@ -1,12 +1,18 @@
 Template.header.helpers({
   isImages: function(){
-    return 'images' === Router.current().route.getName()?'active':false;
+    if (Router.current() && Router.current().route)
+      return 'images' === Router.current().route.getName()?'active':false;
+    return false;
   },
   isContainers: function(){
-    return 'containers' === Router.current().route.getName()?'active':false;
+    if (Router.current() && Router.current().route)
+      return 'containers' === Router.current().route.getName()?'active':false;
+    return false;
   },
   isHost: function(){
-    return 'host' === Router.current().route.getName()?'active':false;
+    if (Router.current() && Router.current().route)
+      return 'host' === Router.current().route.getName()?'active':false;
+    return false;
   },
   errors: function(){
     return _.some(Hosts.find().map(function(e){return !e.status;}));
