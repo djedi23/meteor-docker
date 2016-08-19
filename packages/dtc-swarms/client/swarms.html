@@ -1,0 +1,6 @@
+<template name="swarms_header">
+  {{#if isInRole 'swarms.list'}}<li class="{{isActive}} visible-lg"><a href="{{pathFor 'swarms_list'}}">Swarms</a></li>{{/if}}
+</template>
+<template name="swarms_header2">
+  {{#if isInRole 'swarms.list'}}<li class="{{isActive}}"><a href="{{pathFor 'swarms_list'}}">Swarms</a></li>{{/if}}
+</template>

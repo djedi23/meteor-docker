@@ -1,0 +1,13 @@
+<template name="swarmsInit">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'swarms_list'}}">Swarms</a></li>
+    <li>{{host}}</li>
+    <li class="active">Init Swarms</li>
+  </ol>
+
+  {{#if isInRole 'swarms.init'}}
+  <div class="container">
+    {{> quickForm id="swarmsInit" schema="modules.schemas.swarmsInitSchemas" doc=config type="method" meteormethod="swarms.init" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Init" }}
+  </div>
+  {{/if}}
+</template>

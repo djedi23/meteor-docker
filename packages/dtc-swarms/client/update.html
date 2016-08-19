@@ -1,0 +1,13 @@
+<template name="swarmsUpdate">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'swarms_list'}}">Swarms</a></li>
+    <li>{{_host}}</li>
+    <li class="active">Update Swarms</li>
+  </ol>
+
+  {{#if isInRole 'swarms.update'}}
+  <div class="container">
+    {{> quickForm id="swarmsUpdate" schema="modules.schemas.swarmsUpdateSchemas" doc=config type="method" meteormethod="swarms.update" template="bootstrap3-horizontal" label-class="col-sm-1" input-col-class="col-sm-11" buttonContent="Update" }}
+  </div>
+  {{/if}}
+</template>

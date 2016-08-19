@@ -1,0 +1,42 @@
+<template name="swarmsList">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'swarms_list'}}">Swarms</a></li>
+    <li class="active">all</li>
+  </ol>
+
+  <div class="btn-toolbar" role="toolbar" aria-label="...">
+    <form class="form-inline">
+      {{> hostFilter}}
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+	  <th class="hidden-sm">ID</th>
+          <th>NAME</th>
+          <th>CLUSTER</th>
+          <th>MANAGER</th>
+	  <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if isInRole 'swarms.list'}} {{#each this}}
+        <tr>
+	  <td class="hidden-sm">{{_id}}</td>
+          <td><a href="{{pathFor 'nodesInspect' host=_host id=NodeID}}">{{Id}}</a></td>
+          <td>{{swarm}}</td>
+          <td>{{role}}</td>
+	  <td>
+	    {{#if isInRole 'swarms.leave'}}{{#if inSwarm}}<a id="btnSwarmLeave" role="button" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-cloud-download" style="color:red"></span><span class="hidden-xs"> Leave swarm</span></a>{{/if}}{{/if}}
+	    {{#if isInRole 'swarms.update'}}{{#if inSwarm}}{{#if role}}<a href="{{pathFor 'swarmsUpdate' host=_id}}" role="button" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Update swarm</span></a>{{/if}}{{/if}}{{/if}}
+	    {{#if isInRole 'swarms.join'}}{{#if notInSwarm}}<a href="{{pathFor 'swarmsJoin' host=_id}}" role="button" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-cloud-upload" style="color:green"></span><span class="hidden-xs"> Join swarm</span></a>{{/if}}{{/if}}
+	    {{#if isInRole 'swarms.init'}}{{#if notInSwarm}}<a href="{{pathFor 'swarmsInit' host=_id}}" role="button" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-cloud" style="color:green"></span><span class="hidden-xs"> Init swarm</span></a>{{/if}}{{/if}}
+</td>
+        </tr>
+        {{/each}} {{/if}}
+      </tbody>
+    </table>
+  </div>
+</template>

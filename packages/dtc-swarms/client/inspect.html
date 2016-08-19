@@ -1,0 +1,12 @@
+<template name="swarmsInspect">
+    <ol class="breadcrumb">
+        <li><a href="{{pathFor 'swarms_list'}}">Swarms</a></li>
+        {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+        <li>{{ID}}</li>
+        <li class="active">Inspect</li>
+    </ol>
+
+    <div class="container">
+      {{ > json config=swarm}}
+    </div>
+</template>

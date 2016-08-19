@@ -199,6 +199,22 @@ Meteor.publishComposite("network_inspect", function(hostId, name) {
 });
 
 
+Meteor.publishComposite("swarms_list", {
+  find: function() {
+    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'swarms.list']))
+      return null;
+    return Hosts.find({},{fields:{'info.Swarm':1}});
+  },
+  children: [
+    {
+      find: function(host){
+        return SwarmsInspect.find({host:host._host});
+      }
+    }
+  ]
+});
+
+
 Meteor.publishComposite("nodes_list", {
   find: function() {
     if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'nodes.list']))
@@ -290,7 +306,6 @@ Meteor.publishComposite("tasks_inspect", function(hostId, id) {
 });
 
 
-
 const LISTS_PUBLISH = _.pluck([
   "images",
   "containers",
@@ -303,6 +318,7 @@ const LISTS_PUBLISH = _.pluck([
   "volume_inspect",
   "networks_list",
   "network_inspect",
+  "swarms_list",
   "nodes_list",
   "nodes_inspect",
   "services_list",

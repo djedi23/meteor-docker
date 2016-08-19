@@ -9,6 +9,8 @@ Volumes = new Mongo.Collection('docker.volumes');
 VolumesInspect = new Mongo.Collection('docker.volumes.inspect');
 Networks = new Mongo.Collection('docker.networks');
 NetworksInspect = new Mongo.Collection('docker.networks.inspect');
+Swarms = new Mongo.Collection('docker.swarms');
+SwarmsInspect = new Mongo.Collection('docker.swarms.inspect');
 Nodes = new Mongo.Collection('docker.nodes');
 NodesInspect = new Mongo.Collection('docker.nodess.inspect');
 Services = new Mongo.Collection('docker.services');
@@ -28,6 +30,8 @@ modules.collections.Volumes = Volumes;
 modules.collections.VolumesInspect = VolumesInspect;
 modules.collections.Networks = Networks;
 modules.collections.NetworksInspect = NetworksInspect;
+modules.collections.Swarms = Swarms;
+modules.collections.SwarmsInspect = SwarmsInspect;
 modules.collections.Nodes = Nodes;
 modules.collections.NodesInspect = NodesInspect;
 modules.collections.Services = Services;
@@ -156,6 +160,30 @@ Networks.deny({
 });
 
 NetworksInspect.deny({
+    insert: function(userId, doc) {
+	return true;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+        return true;
+    },
+    remove: function() {
+	return true;
+    }
+});
+
+Swarms.deny({
+    insert: function(userId, doc) {
+	return true;
+    },
+    update: function(userId, doc, fieldNames, modifier) {
+        return true;
+    },
+    remove: function() {
+	return true;
+    }
+});
+
+SwarmsInspect.deny({
     insert: function(userId, doc) {
 	return true;
     },
