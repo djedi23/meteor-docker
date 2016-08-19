@@ -8,7 +8,7 @@ Package.describe({
 });
 
 Npm.depends({
-  "dockerode":"2.3.0"
+    "dockerode":"git+https://github.com/djedi23/dockerode.git" 
 });
 
 Package.on_use(function (api) {
