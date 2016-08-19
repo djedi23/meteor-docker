@@ -1,5 +1,5 @@
 listTasks = function() {
-  _.each(_.pairs(docker), function(dockerHost) {
+  _.each(filterSwarmManager(docker), function(dockerHost) {
     var hostId = dockerHost[0];
     var docker = dockerHost[1];
     if (ensureApi(hostId, '1.24')) {
