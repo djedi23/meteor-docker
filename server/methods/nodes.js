@@ -69,7 +69,7 @@ Meteor.methods({
     });
     if (ensureApi(opts.host, "1.24")) {
       if (!Roles.userIsInRole(Meteor.user(), ['admin', 'nodes.inspect']))
-        throw new Meteor.Error(403, "Not authorized to inspect a nodes");
+        throw new Meteor.Error(403, "Not authorized to inspect a node");
 
       if (opts.host) {
         Future = Npm.require('fibers/future');
@@ -77,7 +77,7 @@ Meteor.methods({
         var nodes = docker[opts.host].getNode(opts.ID);
         nodes.inspect(Meteor.bindEnvironment(function(err, result) {
           if (err) {
-            myFuture.throw(err.reason);
+            myFuture.throw(err);
           }
           else {
             result._host = opts.host;
@@ -99,13 +99,44 @@ Meteor.methods({
         }
       }
     }
+  },
+  'nodes.remove': function(opts) {
+    check(opts, {
+      host: checkHostId,
+      ID: String
+    });
+    if (ensureApi(opts.host, "1.24")) {
+      if (!Roles.userIsInRole(Meteor.user(), ['admin', 'nodes.remove']))
+        throw new Meteor.Error(403, "Not authorized to remove a node");
+
+      if (opts.host) {
+        Future = Npm.require('fibers/future');
+        var myFuture = new Future();
+        var nodes = docker[opts.host].getNode(opts.ID);
+        nodes.remove(Meteor.bindEnvironment(function(err, result) {
+          if (err) {
+            myFuture.throw(err);
+          }
+          else {
+            listNodes();
+            myFuture.return(result);
+          }
+        }));
+        try {
+          return myFuture.wait();
+        }
+        catch (err) {
+          throw new Meteor.Error('docker', err.toString());
+        }
+      }
+    }
   }
 });
 
 const LISTS_METHODS = _.pluck([
   'nodes.list',
   'nodes.inspect',
-
+  'nodes.remove',
 ], 'name');
 DDPRateLimiter.addRule({
   name(name) {

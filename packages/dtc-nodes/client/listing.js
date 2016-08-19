@@ -29,21 +29,21 @@ Template.nodesList.helpers({
 
 
 
-// Template.nodesList.events({
-//   'click #bcremove': function(evt, tpl) {
-//     var opts = {
-//       host: this._host,
-//       Name: this.Name
-//     };
+Template.nodesList.events({
+  'click #bcremove': function(evt, tpl) {
+    var opts = {
+      host: this._host,
+      ID: this.ID
+    };
 
-//     Meteor.call('nodes.remove', opts, function(error, result) {
-//       if (error)
-//         Notifications.error('docker nodes rm', error.reason);
-//       else {
-//         Notifications.success('docker nodes rm', result);
-//         Meteor.call('nodes.list');
-//       }
-//     });
-//     $(evt.currentTarget).blur();
-//   }
-// });
+    Meteor.call('nodes.remove', opts, function(error, result) {
+      if (error)
+        Notifications.error('docker nodes rm', error.reason);
+      else {
+        Notifications.success('docker nodes rm', result);
+        Meteor.call('nodes.list');
+      }
+    });
+    $(evt.currentTarget).blur();
+  }
+});
