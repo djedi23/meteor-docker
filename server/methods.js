@@ -360,45 +360,49 @@ Meteor.methods({
     var container = containerDetails(hostId,containerId);
     if (container){
       container.top(Meteor.bindEnvironment(
-        function (err, top) {
-          if (err){
-            ContainersInspect.update({_host:hostId, Id:containerId}, {$unset: {top:""}});
-            return;
-          }
-          var image = {top: top};
-          var u = ContainersInspect.update({_host:hostId, Id:containerId}, {$set: image});
-        }));
+	function (err, top) {
+	  if (err){
+	    ContainersInspect.update({_host:hostId, Id:containerId}, {$unset: {top:""}});
+	    return;
+	  }
+	  var image = {top: top};
+	  var u = ContainersInspect.update({_host:hostId, Id:containerId}, {$set: image});
+	}));
 
-      container.logs({stdout:1, tail:200},Meteor.bindEnvironment(
-        function (err, logsStream) {
-          if (err){
-            console.log(err);
-            ContainersInspect.update({_host:hostId,Id:containerId}, {$unset: {logs:""}});
-            return;
-          }
+      if (Roles.userIsInRole(Meteor.user(), ['container.logs'])){
+	container.logs({stdout:1, tail:200},Meteor.bindEnvironment(
+	  function (err, logsStream) {
+	    if (err){
+	      console.log("container log",err);
+	      ContainersInspect.update({_host:hostId,Id:containerId}, {$unset: {logs:""}});
+	      return;
+	    }
 
-          var buffer="";
-          logsStream.on('data', function(chunk){
-            buffer += chunk.slice(8).toString(); // https://github.com/docker/docker/issues/8223
-          }).on('end', Meteor.bindEnvironment(function(){
-                         var logs = {logs: buffer};
-                         var u = ContainersInspect.update({_host:hostId, Id:containerId}, {$set: logs});
-                       }));
-        }));
+	    var buffer="";
+	    logsStream.on('data', function(chunk){
+	      buffer += chunk.slice(8).toString(); // https://github.com/docker/docker/issues/8223
+	    }).on('end', Meteor.bindEnvironment(function(){
+	      var logs = {logs: buffer};
+	      var u = ContainersInspect.update({_host:hostId, Id:containerId}, {$set: logs});
+	    }));
+	  }));
+      }
 
-      container.changes(Meteor.bindEnvironment(
-        function (err, changes) {
-          if (err){
-            ContainersInspect.update({_host:hostId,Id:containerId}, {$unset: {diff:""}});
-            return;
-          }
+      if (Roles.userIsInRole(Meteor.user(), ['container.changes'])){
+	container.changes(Meteor.bindEnvironment(
+	  function (err, changes) {
+	    if (err){
+	      ContainersInspect.update({_host:hostId,Id:containerId}, {$unset: {diff:""}});
+	      return;
+	    }
 
-          if (changes){
-            var changes_ = {changes: changes};
-            var u = ContainersInspect.update({_host:hostId,Id:containerId}, {$set: changes_});
-          }
-        }));
-      startMonitoringContainer(hostId,containerId);
+	    if (changes){
+	      var changes_ = {changes: changes};
+	      var u = ContainersInspect.update({_host:hostId,Id:containerId}, {$set: changes_});
+	    }
+	  }));
+      }
+      //      startMonitoringContainer(hostId,containerId);
     }
   },
   'containers.list': function(){

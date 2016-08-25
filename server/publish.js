@@ -70,10 +70,16 @@ Meteor.publishComposite("containerInspect", function(hostId, containerId) {
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'container.view']))
         return null;
 
+      fields = {};
+      if (!Roles.userIsInRole(this.userId, ['container.logs']))
+        fields.logs = 0;
+      if (!Roles.userIsInRole(this.userId, ['container.changes']))
+        fields.changes = 0;
+
       return ContainersInspect.find({
         _host: hostId,
         Id: containerId
-      });
+      },{fields: fields});
     },
     children: [
       {
