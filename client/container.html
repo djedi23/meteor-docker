@@ -72,14 +72,15 @@
 	{{#if canUnPause}}{{#if isInRole 'container.unpause'}}<button id="bunpause" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Unpause</span></button>{{/if}}{{/if}}
 	{{#if canPause}}{{#if isInRole 'container.pause'}}<button id="bpause" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pause orange"></span><span class="hidden-xs"> Pause</span></button>{{/if}}{{/if}}
 	{{#if canRestart}}{{#if isInRole 'container.restart'}}<button id="brestart" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-repeat orange"></span><span class="hidden-xs"> Restart</span></button>{{/if}}{{/if}}
-	{{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> stop</span></button>{{/if}}{{/if}}
-	{{#if canKill}}{{#if isInRole 'container.kill'}}<button id="bkill" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-flash red"></span><span class="hidden-xs"> kill</span></button>{{/if}}{{/if}}
-	{{#if canRemove}}{{#if isInRole 'container.rm'}}<button id="brm" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-trash red"></span><span class="hidden-xs"> remove</span></button>{{/if}}{{/if}}
-	{{#if isInRole 'container.commit'}}<a href="{{pathFor 'containerCommit' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-camera"></span><span class="hidden-xs"> commit</span></a>{{/if}}
-	{{#if ensureApi _host '1.17'}}{{#if isInRole 'container.rename'}}<a href="{{pathFor 'containerRename' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> rename</span></a>{{/if}}{{/if}}
-{{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> copy</span></a>{{/if}} --}}
+	{{#if ensureApi _host '1.22'}}{{#if canUpdate}}{{#if isInRole 'container.update'}}<a href="{{pathFor 'containerUpdate' id=Id host=_host}}" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Update</span></a>{{/if}}{{/if}}{{/if}}
+	{{#if canStop}}{{#if isInRole 'container.stop'}}<button id="bstop" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-stop red"></span><span class="hidden-xs"> Stop</span></button>{{/if}}{{/if}}
+	{{#if canKill}}{{#if isInRole 'container.kill'}}<button id="bkill" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-flash red"></span><span class="hidden-xs"> Kill</span></button>{{/if}}{{/if}}
+	{{#if canRemove}}{{#if isInRole 'container.rm'}}<button id="brm" type="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-trash red"></span><span class="hidden-xs"> Remove</span></button>{{/if}}{{/if}}
+	{{#if isInRole 'container.commit'}}<a href="{{pathFor 'containerCommit' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-camera"></span><span class="hidden-xs"> Commit</span></a>{{/if}}
+	{{#if ensureApi _host '1.17'}}{{#if isInRole 'container.rename'}}<a href="{{pathFor 'containerRename' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Rename</span></a>{{/if}}{{/if}}
+{{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> Copy</span></a>{{/if}} --}}
 
-	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> exec create</span></a>{{/if}}{{/if}}
+	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Exec create</span></a>{{/if}}{{/if}}
       </div>
 
       <div class="row">
@@ -357,6 +358,26 @@
 </template>
 
 
+<template name="containerUpdate">
+  <div class="container">
+  <ol class="breadcrumb">
+    <li><a href="{{pathFor 'containers'}}">Containers</a></li>
+    {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+    <li><a href="{{pathFor 'containersInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+    <li class="active">update</li>
+  </ol>
+
+  {{#if isInRole 'container.update'}}
+  <form class="form-inline">
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+      {{> runHooks 'template.container.update.actions'}}
+    </div>
+  </form>
+  {{> quickForm id="containerUpdateForm" schema="containerUpdateSchemas" type="method" doc=config meteormethod="container.update" template="bootstrap3-horizontal" label-class="col-sm-2" input-col-class="col-sm-10" buttonContent="Update" }}
+  {{/if}}
+  </div>
+</template>
+
 <template name="containerExecCreate">
   <div class="container">
   <ol class="breadcrumb">
@@ -377,6 +398,7 @@
   {{/if}}
   </div>
 </template>
+
 
 <template name="containerFilter">
   <div class="form-group form-group-sm has-feedback">

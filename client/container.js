@@ -313,6 +313,9 @@ Template.containerInspect.helpers({
       return (this.State.Running && !this.State.Paused);
     return undefined;
   },
+  canUpdate: function() {
+    return true;
+  },
   canStart: function() {
     if (this.State)
       return !(this.State.Running);
@@ -443,6 +446,32 @@ Template.containerRename.helpers({
     config.id = this.Id;
     config.host = this._host;
     config.Name = this.Names;
+
+    return config;
+  }
+});
+
+
+Template.containerUpdate.helpers({
+  IdShort: function() {
+    if (this.Id)
+      return this.Id.substring(0, 12);
+    return null;
+  },
+  multihost: function() {
+    return Hosts.find().count() > 1;
+  },
+  hostId: function() {
+    var host = Hosts.findOne(this._host);
+    if (host)
+      return host.Id;
+    return null;
+  },
+  config: function() {
+    var config = this.HostConfig || {};
+    config.id = this.Id;
+    config.host = this._host;
+//    config.Name = this.Names;
 
     return config;
   }

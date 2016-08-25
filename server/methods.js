@@ -513,6 +513,18 @@ Meteor.methods({
 
     containerCall(opts, 'rename');
   },
+  'container.update': function(opts,a,b){
+    check(opts,containerUpdateSchemas);
+    check(opts.id, checkDockerId);
+    check(a,Match.Any);
+    check(b,Match.Any);
+    if (ensureApi(opts.host, "1.22")) {
+      if (! Roles.userIsInRole(Meteor.user(), ['admin','container.update']))
+	throw new Meteor.Error(403, "Not authorized to update container");
+
+      containerCall(opts, 'update');
+    }
+  },
   'container.commit': function(opts,a,b){
     check(opts,commitSchemas);
     check(opts.container, checkDockerId);
