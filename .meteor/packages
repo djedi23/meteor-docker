@@ -32,7 +32,7 @@ jakozaur:ansi-up
 useraccounts:iron-routing
 meteor-base@1.0.4
 mobile-experience@1.0.4
-mongo@1.1.11
+mongo@1.1.12
 blaze-html-templates@1.0.4
 session@1.1.6
 jquery@1.11.9
@@ -60,4 +60,4 @@ standard-minifier-js@1.2.0
 aldeed:autoform-select2
 natestrauser:select2
 zimme:select2-bootstrap3-css
-shell-server
+shell-server@0.2.1
