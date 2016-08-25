@@ -28,11 +28,15 @@ docker_init = function(hostId) {
         else {
           modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:true}}, {validate:false, filter: false});
           errorCount=0;
+	  var isAPI1_22 = ensureApi(host._id,1.22);
           docker[host._id]._eventStream = stream;
           stream.on('data', Meteor.bindEnvironment(
             function(chunk) {
               var event = JSON.parse(chunk.toString());
-              eventHandle(host._id,event);
+	      if (isAPI1_22)
+		eventHandle1_22(host._id,event);
+	      else
+		eventHandle(host._id,event);
               modules.collections.Hosts.upsert({_id:host._id}, {$set: {status:true}}, {validate:false, filter: false});
             })).on('end', Meteor.bindEnvironment(
               function(error) {
