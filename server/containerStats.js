@@ -19,7 +19,7 @@ startMonitoringContainer = function(hostId, containerId){
     function (err, stream) {
       if (err){
         delete containerStats[containerId];
-        console.log(err);
+        console.log('container stats',err);
         return;
       }
 

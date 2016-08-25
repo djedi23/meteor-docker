@@ -5,14 +5,14 @@ containerStats = {};
 
 
 checkDockerId = Match.Where(function(x){
-                  check(x,String);
-                  return /^(sha256:)?[0-9a-z]{64}$/.test(x);
-                });
+  check(x,String);
+  return /^(sha256:)?[0-9a-z]{64}$/.test(x);
+});
 
 checkHostId = Match.Where(function(x){
-                check(x,String);
-                return modules.hostIdRegExp.test(x);
-              });
+  check(x,String);
+  return modules.hostIdRegExp.test(x);
+});
 
 ensureApi = function(hostId, api) {
   var host = Hosts.findOne({_id:hostId});
@@ -39,31 +39,31 @@ listContainers = function(sinceId){
     var hostId = dockerHost[0];
     var docker = dockerHost[1];
     docker.listContainers(options,
-      Meteor.bindEnvironment(function (err, containers) {
-        if (err){
-          console.log(err);
-          return;
-        }
-        var list = {};
-        _.each(Containers.find({_host:hostId},{fields:{Id:1}}).fetch(),
-          function(e){list[e.Id]=1;});
-        containers.forEach(function(container){
-          container._host = hostId;
-          v = {};
-          if (container.Labels)
-            _.each(_.pairs(container.Labels),
-              function(p){
-                p[0] = p[0].replace(/\./g,'U+FF0E');
-                v[p[0]] = p[1];
-              });
-          container.Labels = v;
+			  Meteor.bindEnvironment(function (err, containers) {
+			    if (err){
+			      console.log("list container",err);
+			      return;
+			    }
+			    var list = {};
+			    _.each(Containers.find({_host:hostId},{fields:{Id:1}}).fetch(),
+				   function(e){list[e.Id]=1;});
+			    containers.forEach(function(container){
+			      container._host = hostId;
+			      v = {};
+			      if (container.Labels)
+				_.each(_.pairs(container.Labels),
+				       function(p){
+					 p[0] = p[0].replace(/\./g,'U+FF0E');
+					 v[p[0]] = p[1];
+				       });
+			      container.Labels = v;
 
-          var u = Containers.upsert({_host:hostId, Id:container.Id}, {$set: container});
-          delete list[container.Id];
-        });
-        Containers.remove({Id:{$in:_.keys(list)}});
-        ContainersInspect.remove({Id:{$in:_.keys(list)}});
-      }));
+			      var u = Containers.upsert({_host:hostId, Id:container.Id}, {$set: container});
+			      delete list[container.Id];
+			    });
+			    Containers.remove({Id:{$in:_.keys(list)}});
+			    ContainersInspect.remove({Id:{$in:_.keys(list)}});
+			  }));
   });
 };
 
@@ -80,15 +80,15 @@ execDetails = function(hostId, exec){
     return;
   if (exec.inspect)
     exec.inspect(Meteor.bindEnvironment(function (err, exec) {
-                   if (err){
-                     console.log(err);
-                     return;
-                   }
+      if (err){
+	console.log(err);
+	return;
+      }
 
-                   exec._host = hostId;
-                   console.log(EJSON.stringify(exec));
-                   //var u = ContainersInspect.upsert({_host:hostId, Id:exec.Id}, {$set: exec});
-                 }));
+      exec._host = hostId;
+      console.log(EJSON.stringify(exec));
+      //var u = ContainersInspect.upsert({_host:hostId, Id:exec.Id}, {$set: exec});
+    }));
   return exec;
 };
 
@@ -102,67 +102,67 @@ containerDetails = function(hostId, containerId){
 
   var container = docker[hostId].getContainer(containerId);
   container.inspect(Meteor.bindEnvironment(function (err, container) {
-                      if (err)
-                        return;
+    if (err)
+      return;
 
-                      container._host = hostId;
-                      var v = {};
-                      if (container.Volumes)
-                        _.each(_.pairs(container.Volumes),
-                          function(p){
-                            p[0] = p[0].replace(/\./g,'U+FF0E');
-                            v[p[0]] = p[1];
-                          });
-                      container.Volumes = v;
+    container._host = hostId;
+    var v = {};
+    if (container.Volumes)
+      _.each(_.pairs(container.Volumes),
+	     function(p){
+	       p[0] = p[0].replace(/\./g,'U+FF0E');
+	       v[p[0]] = p[1];
+	     });
+    container.Volumes = v;
 
-                      v = {};
-                      if (container.VolumesRW)
-                        _.each(_.pairs(container.VolumesRW),
-                          function(p){
-                            p[0] = p[0].replace(/\./g,'U+FF0E');
-                            v[p[0]] = p[1];
-                          });
-                      container.VolumesRW = v;
+    v = {};
+    if (container.VolumesRW)
+      _.each(_.pairs(container.VolumesRW),
+	     function(p){
+	       p[0] = p[0].replace(/\./g,'U+FF0E');
+	       v[p[0]] = p[1];
+	     });
+    container.VolumesRW = v;
 
-                      v = {};
-                      if (container.Config && container.Config.Volumes)
-                        _.each(_.pairs(container.Config.Volumes),
-                          function(p){
-                            p[0] = p[0].replace(/\./g,'U+FF0E');
-                            v[p[0]] = p[1];
-                          });
-                      container.Config.Volumes = v;
+    v = {};
+    if (container.Config && container.Config.Volumes)
+      _.each(_.pairs(container.Config.Volumes),
+	     function(p){
+	       p[0] = p[0].replace(/\./g,'U+FF0E');
+	       v[p[0]] = p[1];
+	     });
+    container.Config.Volumes = v;
 
-                      v = {};
-                      if (container.Labels)
-                        _.each(_.pairs(container.Labels),
-                          function(p){
-                            p[0] = p[0].replace(/\./g,'U+FF0E');
-                            v[p[0]] = p[1];
-                          });
-                      container.Labels = v;
+    v = {};
+    if (container.Labels)
+      _.each(_.pairs(container.Labels),
+	     function(p){
+	       p[0] = p[0].replace(/\./g,'U+FF0E');
+	       v[p[0]] = p[1];
+	     });
+    container.Labels = v;
 
-                      v = {};
-                      if (container.Config.Labels)
-                        _.each(_.pairs(container.Config.Labels),
-                          function(p){
-                            p[0] = p[0].replace(/\./g,'U+FF0E');
-                            v[p[0]] = p[1];
-                          });
-                      container.Config.Labels = v;
+    v = {};
+    if (container.Config.Labels)
+      _.each(_.pairs(container.Config.Labels),
+	     function(p){
+	       p[0] = p[0].replace(/\./g,'U+FF0E');
+	       v[p[0]] = p[1];
+	     });
+    container.Config.Labels = v;
 
-                      v = {};
-                      if (container.HostConfig.Labels)
-                        _.each(_.pairs(container.HostConfig.Labels),
-                          function(p){
-                            p[0] = p[0].replace(/\./g,'U+FF0E');
-                            v[p[0]] = p[1];
-                          });
-                      container.HostConfig.Labels = v;
+    v = {};
+    if (container.HostConfig.Labels)
+      _.each(_.pairs(container.HostConfig.Labels),
+	     function(p){
+	       p[0] = p[0].replace(/\./g,'U+FF0E');
+	       v[p[0]] = p[1];
+	     });
+    container.HostConfig.Labels = v;
 
 
-                      var u = ContainersInspect.upsert({_host:hostId, Id:container.Id}, {$set: container});
-                    }));
+    var u = ContainersInspect.upsert({_host:hostId, Id:container.Id}, {$set: container});
+  }));
 
   var cont = ContainersInspect.findOne({_host:hostId, Id:containerId});
   // if (cont && cont.execs){
@@ -185,31 +185,31 @@ listImages = function(){
 
     var list = {};
     _.each(Images.find({_host:hostId},{fields:{Id:1}}).fetch(),
-      function(e){list[e.Id]=1;});
+	   function(e){list[e.Id]=1;});
 
 
     docker.listImages(Meteor.bindEnvironment(
       function (err, images) {
-        if (err)
-          return;
+	if (err)
+	  return;
 
-        images.forEach(function(img){
-          img._host = hostId;
+	images.forEach(function(img){
+	  img._host = hostId;
 
-          v = {};
-          if (img.Labels)
-            _.each(_.pairs(img.Labels),
-              function(p){
-                p[0] = p[0].replace(/\./g,'U+FF0E');
-                v[p[0]] = p[1];
-              });
-          img.Labels = v;
+	  v = {};
+	  if (img.Labels)
+	    _.each(_.pairs(img.Labels),
+		   function(p){
+		     p[0] = p[0].replace(/\./g,'U+FF0E');
+		     v[p[0]] = p[1];
+		   });
+	  img.Labels = v;
 
-          var u = Images.upsert({_host:hostId, Id:img.Id}, {$set: img});
-          delete list[img.Id];
-        });
-        Images.remove({Id:{$in:_.keys(list)}});
-        ImagesInspect.remove({Id:{$in:_.keys(list)}});
+	  var u = Images.upsert({_host:hostId, Id:img.Id}, {$set: img});
+	  delete list[img.Id];
+	});
+	Images.remove({Id:{$in:_.keys(list)}});
+	ImagesInspect.remove({Id:{$in:_.keys(list)}});
       }));
   });
 };
@@ -221,25 +221,25 @@ listVolumes = function(){
     if (ensureApi(hostId,'1.21')) {
       var list = {};
       _.each(Volumes.find({_host:hostId},{fields:{Name:1}}).fetch(),
-        function(e){list[e.Name]=1;});
+	     function(e){list[e.Name]=1;});
 
       docker.listVolumes(Meteor.bindEnvironment(
-        function (err, volumes) {
-          if (err)
-            return;
+	function (err, volumes) {
+	  if (err)
+	    return;
 
-          if (!volumes.Volumes)
-            return;
+	  if (!volumes.Volumes)
+	    return;
 
-          volumes.Volumes.forEach(function(vol){
-            vol._host = hostId;
+	  volumes.Volumes.forEach(function(vol){
+	    vol._host = hostId;
 
-            var u = Volumes.upsert({_host:hostId,Name:vol.Name}, {$set: vol});
-            delete list[vol.Name];
-          });
-          Volumes.remove({Name:{$in:_.keys(list)}});
-          VolumesInspect.remove({Name:{$in:_.keys(list)}});
-        }));
+	    var u = Volumes.upsert({_host:hostId,Name:vol.Name}, {$set: vol});
+	    delete list[vol.Name];
+	  });
+	  Volumes.remove({Name:{$in:_.keys(list)}});
+	  VolumesInspect.remove({Name:{$in:_.keys(list)}});
+	}));
     }
   });
 };
@@ -256,31 +256,31 @@ imageDetail = function(hostId, imgId){
   if (img) {
     img.inspect(Meteor.bindEnvironment(function (err, image) {
       if (err)
-        return;
+	return;
       var img = Images.findOne({_host:hostId, Id: queryImageId(image.Id)});
       if (img)
-        image.tags = img.RepoTags;
+	image.tags = img.RepoTags;
 
       image._host = hostId;
       if (image._id)
-        delete image._id;
+	delete image._id;
 
       v = {};
       if (image.ContainerConfig.Labels)
-        _.each(_.pairs(image.ContainerConfig.Labels),
-               function(p){
-                 p[0] = p[0].replace(/\./g,'U+FF0E');
-                 v[p[0]] = p[1];
-               });
+	_.each(_.pairs(image.ContainerConfig.Labels),
+	       function(p){
+		 p[0] = p[0].replace(/\./g,'U+FF0E');
+		 v[p[0]] = p[1];
+	       });
       image.ContainerConfig.Labels = v;
       v = {};
       if (image.Config && image.Config.Labels) {
-        _.each(_.pairs(image.Config.Labels),
-               function(p){
-                 p[0] = p[0].replace(/\./g,'U+FF0E');
-                 v[p[0]] = p[1];
-               });
-        image.Config.Labels = v;
+	_.each(_.pairs(image.Config.Labels),
+	       function(p){
+		 p[0] = p[0].replace(/\./g,'U+FF0E');
+		 v[p[0]] = p[1];
+	       });
+	image.Config.Labels = v;
       }
 
       var u = ImagesInspect.upsert({_host:hostId,Id:image.Id}, {$set: image});
@@ -290,9 +290,9 @@ imageDetail = function(hostId, imgId){
     var imgage_ = Images.findOne({_host:hostId, Id:queryImageId(imgId)});
     img.history(Meteor.bindEnvironment(function (err, history) {
       if (err)
-        return;
+	return;
       var image = {_host:hostId,Id: imgage_.Id,
-                   history: history};
+		   history: history};
       var u = ImagesInspect.upsert({_host:hostId,Id:imgage_.Id}, {$set: image});
     }));
   }
@@ -309,16 +309,17 @@ var containerCall = function(opts, fct) {
       delete callopts.id;
       delete callopts.host;
       container[fct].call(container, callopts, function (err, result) {
-        if (err){
-          console.log(err);
-          myFuture.throw(err.json?err.json:(err.reason?err.reason:err));
-        } else
-          myFuture.return(result);
+	if (err){
+	  console.log("container",fct,err);
+	  myFuture.throw(err.json?err.json:(err.reason?err.reason:err));
+	} else {
+	  myFuture.return(result);
+	}
       });
       try{
-        return myFuture.wait();
+	return myFuture.wait();
       } catch (err){
-        throw new Meteor.Error('docker', err.toString());
+	throw new Meteor.Error('docker', err.toString());
       }
     }
   }
@@ -335,9 +336,9 @@ var imageCall = function(opts, fct) {
     delete callopts.host;
     image[fct].call(image, callopts, function (err, result) {
       if (err){
-        myFuture.throw(err.reason);
+	myFuture.throw(err.reason);
       } else
-        myFuture.return(result);
+	myFuture.return(result);
     });
     try{
       return myFuture.wait();
@@ -425,15 +426,15 @@ Meteor.methods({
     var container = docker[hostId].getContainer(containerId);
     if (container){
       container.pause(function (err, result) {
-        if (err){
-          myFuture.throw(err.reason);
-        } else
-          myFuture.return(result);
+	if (err){
+	  myFuture.throw(err.reason);
+	} else
+	  myFuture.return(result);
       });
       try{
-        return myFuture.wait();
+	return myFuture.wait();
       } catch (err){
-        throw new Meteor.Error('docker', err.toString());
+	throw new Meteor.Error('docker', err.toString());
       }
     }
   },
@@ -448,15 +449,15 @@ Meteor.methods({
     var container = docker[hostId].getContainer(containerId);
     if (container){
       container.unpause(function (err, result) {
-        if (err){
-          myFuture.throw(err.reason);
-        } else
-          myFuture.return(result);
+	if (err){
+	  myFuture.throw(err.reason);
+	} else
+	  myFuture.return(result);
       });
       try{
-        return myFuture.wait();
+	return myFuture.wait();
       } catch (err){
-        throw new Meteor.Error('docker', err.toString());
+	throw new Meteor.Error('docker', err.toString());
       }
     }
   },
@@ -554,17 +555,17 @@ Meteor.methods({
     var exec = containerCall(opts, 'exec');
     if (exec){
       exec.start({},Meteor.bindEnvironment(function(err, stream){
-                      if (err) {
-                        console.log(err);
-                        return;
-                      }
-                      stream.pipe(process.stdout);
+	if (err) {
+	  console.log(err);
+	  return;
+	}
+	stream.pipe(process.stdout);
 
-                      var stub = {};
-                      stub['execs.'+exec.id] = {};
-                      ContainersInspect.upsert({_host:opts.host, Id:opts.id}, {$set: stub});
-                      execDetails(opts.host, exec);
-                    }));
+	var stub = {};
+	stub['execs.'+exec.id] = {};
+	ContainersInspect.upsert({_host:opts.host, Id:opts.id}, {$set: stub});
+	execDetails(opts.host, exec);
+      }));
     }
   },
   'host.details':function(){
@@ -576,22 +577,22 @@ Meteor.methods({
       var docker = dockerHost[1];
 
       docker.version(Meteor.bindEnvironment(function (err, version) {
-                       if (err)
-                         return;
-                       modules.collections.Hosts.update({_id:hostId}, {$set: {version:version}}, {validate:false, filter: false});
-                     }));
+	if (err)
+	  return;
+	modules.collections.Hosts.update({_id:hostId}, {$set: {version:version}}, {validate:false, filter: false});
+      }));
       docker.info(Meteor.bindEnvironment(function (err, info) {
-                    if (err)
-                      return;
-                    if (! _.isUndefined(info.RegistryConfig.IndexConfigs)){
-                      _.each(_.pairs(info.RegistryConfig.IndexConfigs), function(index){
-                        if (index[0].indexOf('.') !== -1){
-                          info.RegistryConfig.IndexConfigs[index[0].replace('.','_','g')] = index[1];
-                          delete info.RegistryConfig.IndexConfigs[index[0]];
-                        }});}
+	if (err)
+	  return;
+	if (! _.isUndefined(info.RegistryConfig.IndexConfigs)){
+	  _.each(_.pairs(info.RegistryConfig.IndexConfigs), function(index){
+	    if (index[0].indexOf('.') !== -1){
+	      info.RegistryConfig.IndexConfigs[index[0].replace('.','_','g')] = index[1];
+	      delete info.RegistryConfig.IndexConfigs[index[0]];
+	    }});}
 
-                    modules.collections.Hosts.update({_id:hostId}, {$set: {info:info}}, {validate:false, filter: false});
-                  }));
+	modules.collections.Hosts.update({_id:hostId}, {$set: {info:info}}, {validate:false, filter: false});
+      }));
     });
   },
   'host.new':function(host){
@@ -640,9 +641,9 @@ Meteor.methods({
     var host = Hosts.findOne({_id:hostId});
     if (host) {
       if (host.disabled)
-        Hosts.update({_id:hostId},{$unset: {disabled: ""}}, {validate:false, filter:false});
+	Hosts.update({_id:hostId},{$unset: {disabled: ""}}, {validate:false, filter:false});
       else
-        Hosts.update({_id:hostId},{$set: {disabled: 'disabled'}}, {validate:false, filter:false});
+	Hosts.update({_id:hostId},{$set: {disabled: 'disabled'}}, {validate:false, filter:false});
     }
   },
   'images.list': function(){
@@ -670,29 +671,29 @@ Meteor.methods({
 
     if(docker[params.host])
       docker[params.host].createImage(params,Meteor.bindEnvironment(
-        function (err, stream) {
-          if (err){
-            console.log(err);
-            return;
-          }
+	function (err, stream) {
+	  if (err){
+	    console.log(err);
+	    return;
+	  }
 
-          stream.on('data', Meteor.bindEnvironment(
-            function(chunk){
-              var status = JSON.parse(chunk);
-              if (status.id){
-                status.Id = washImageId(status.id);
-                status._host=params.host;
-                if (status.status === 'Download complete')
-                  Images.remove({_host:params.host, Id:status.Id});
-                else
-                  Images.upsert({_host:params.host, Id:status.Id}, {$set: status});
-              }
-            })).on('end', Meteor.bindEnvironment(
-              function(){
-                listImages();
-                modules.calls('events.image.pull.'+params.fromImage+'.'+params.tag, this, params.host, params);
-              }));
-        }));
+	  stream.on('data', Meteor.bindEnvironment(
+	    function(chunk){
+	      var status = JSON.parse(chunk);
+	      if (status.id){
+		status.Id = washImageId(status.id);
+		status._host=params.host;
+		if (status.status === 'Download complete')
+		  Images.remove({_host:params.host, Id:status.Id});
+		else
+		  Images.upsert({_host:params.host, Id:status.Id}, {$set: status});
+	      }
+	    })).on('end', Meteor.bindEnvironment(
+	      function(){
+		listImages();
+		modules.calls('events.image.pull.'+params.fromImage+'.'+params.tag, this, params.host, params);
+	      }));
+	}));
   },
   'image.push': function(params,a,b){
     check(params,pushSchemas);
@@ -704,29 +705,29 @@ Meteor.methods({
 
     if(docker[params.host])
       docker[params.host].push(params,Meteor.bindEnvironment(
-        function (err, stream) {
-          if (err){
-            console.log(err);
-            return;
-          }
+	function (err, stream) {
+	  if (err){
+	    console.log(err);
+	    return;
+	  }
 
-          stream.on('data', Meteor.bindEnvironment(
-            function(chunk){
-              var status = JSON.parse(chunk);
-              console.log("chunk",status);
-              if (status.id){
-                status.Id = washImageId(status.id);
-                status._host=params.host;
-                // if (status.status === 'Download complete')
-                //     Images.remove({_host:params.host, Id:status.Id});
-                // else
-                Images.upsert({_host:params.host, Id:status.Id}, {$set: status});
-              }
-            })).on('end', Meteor.bindEnvironment(
-              function(){
-                listImages();
-              }));
-        }));
+	  stream.on('data', Meteor.bindEnvironment(
+	    function(chunk){
+	      var status = JSON.parse(chunk);
+	      console.log("chunk",status);
+	      if (status.id){
+		status.Id = washImageId(status.id);
+		status._host=params.host;
+		// if (status.status === 'Download complete')
+		//     Images.remove({_host:params.host, Id:status.Id});
+		// else
+		Images.upsert({_host:params.host, Id:status.Id}, {$set: status});
+	      }
+	    })).on('end', Meteor.bindEnvironment(
+	      function(){
+		listImages();
+	      }));
+	}));
   },
   'image.run': function(params,a,b){
     check(params,runSchemas);
@@ -740,9 +741,9 @@ Meteor.methods({
     if (docker[params.host]){
       var command = [];
       if (params.command){
-        command = [params.command];
-        if (params.args)
-          command = command.concat(params.args);
+	command = [params.command];
+	if (params.args)
+	  command = command.concat(params.args);
       }
       var create_options = {};
       copyIfExists(params,create_options, 'name');
@@ -763,43 +764,43 @@ Meteor.methods({
       create_options.HostConfig = {};
       create_options.HostConfig.PortBindings = {};
       _.each(params.publish,function(binding){
-        create_options.ExposedPorts[binding.port.port+'/'+binding.port.protocol] = {};
-        if (binding.host && binding.host.hostPort)
-          create_options.HostConfig.PortBindings[binding.port.port+'/'+binding.port.protocol] = [{HostPort:binding.host.hostPort.toString(),
-            HostIp:binding.host.hostIp}];
+	create_options.ExposedPorts[binding.port.port+'/'+binding.port.protocol] = {};
+	if (binding.host && binding.host.hostPort)
+	  create_options.HostConfig.PortBindings[binding.port.port+'/'+binding.port.protocol] = [{HostPort:binding.host.hostPort.toString(),
+												  HostIp:binding.host.hostIp}];
       });
       create_options.HostConfig.Links = _.map(params.links,
-        function(l){
-          return l.container_name+':'+l.alias;
-        });
+					      function(l){
+						return l.container_name+':'+l.alias;
+					      });
 
       if (ensureApi(params.host,'1.18')) {
-        create_options.Labels={};
-        _.each(params.Labels, function(label){ create_options.Labels[label.key] = label.value; });
+	create_options.Labels={};
+	_.each(params.Labels, function(label){ create_options.Labels[label.key] = label.value; });
       }
 
       copyIfExists(params,create_options.HostConfig, 'PublishAllPorts');
       copyIfExists(params,create_options.HostConfig, 'Binds');
       copyIfExists(params,create_options.HostConfig, 'RestartPolicy');
       if (ensureApi(params.host,'1.18')) {
-        copyIfExists(params,create_options.HostConfig, 'Ulimits');
+	copyIfExists(params,create_options.HostConfig, 'Ulimits');
       }
 
-      //console.log('co',JSON.stringify(create_options));
+      console.log('co',JSON.stringify(create_options));
       var start_options = {};
 
       Future = Npm.require('fibers/future');
       var myFuture = new Future();
       docker[params.host].run(washImageId(params.id),command, [process.stdout, process.stderr], create_options,  start_options,
-        function (err, result,container) {
-        }).on('container',
-          function (container) {
-            myFuture.return(container.id);
-          });
+			      function (err, result,container) {
+			      }).on('container',
+				    function (container) {
+				      myFuture.return(container.id);
+				    });
       try{
-        return myFuture.wait();
+	return myFuture.wait();
       } catch (err){
-        throw new Meteor.Error('docker', err.toString());
+	throw new Meteor.Error('docker', err.toString());
       }
     }
   },
@@ -839,78 +840,78 @@ Meteor.methods({
     check(opts.host, checkHostId);
     if (ensureApi(opts.host, "1.21")){
       if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.create']))
-        throw new Meteor.Error(403, "Not authorized to tag image");
+	throw new Meteor.Error(403, "Not authorized to tag image");
 
       if (opts.host) {
-        Future = Npm.require('fibers/future');
-        var myFuture = new Future();
+	Future = Npm.require('fibers/future');
+	var myFuture = new Future();
 
-        docker[opts.host].createVolume(opts, function(err, result) {
-          if (err) {
-            myFuture.throw(err.reason);
-          }
-          else
-            myFuture.return(result);
-        });
-        try {
-          return myFuture.wait();
-        }
-        catch (err) {
-          throw new Meteor.Error('docker', err.toString());
-        }
+	docker[opts.host].createVolume(opts, function(err, result) {
+	  if (err) {
+	    myFuture.throw(err.reason);
+	  }
+	  else
+	    myFuture.return(result);
+	});
+	try {
+	  return myFuture.wait();
+	}
+	catch (err) {
+	  throw new Meteor.Error('docker', err.toString());
+	}
       }
     }},
   'volume.remove':function(opts){
     check(opts, {host:checkHostId, Name:String});
     if (ensureApi(opts.host, "1.21")){
       if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.remove']))
-        throw new Meteor.Error(403, "Not authorized to tag image");
+	throw new Meteor.Error(403, "Not authorized to tag image");
 
       if (opts.host) {
-        Future = Npm.require('fibers/future');
-        var myFuture = new Future();
-        var volume = docker[opts.host].getVolume(opts.Name);
-        volume.remove(opts, function(err, result) {
-          if (err) {
-            myFuture.throw(err.reason);
-          }
-          else
-            myFuture.return(result);
-        });
-        try {
-          return myFuture.wait();
-        }
-        catch (err) {
-          throw new Meteor.Error('docker', err.toString());
-        }
+	Future = Npm.require('fibers/future');
+	var myFuture = new Future();
+	var volume = docker[opts.host].getVolume(opts.Name);
+	volume.remove(opts, function(err, result) {
+	  if (err) {
+	    myFuture.throw(err.reason);
+	  }
+	  else
+	    myFuture.return(result);
+	});
+	try {
+	  return myFuture.wait();
+	}
+	catch (err) {
+	  throw new Meteor.Error('docker', err.toString());
+	}
       }
     }},
   'volume.inspect':function(opts){
     check(opts, {host:checkHostId, Name:String});
     if (ensureApi(opts.host, "1.21")){
       if (! Roles.userIsInRole(Meteor.user(), ['admin','volume.remove']))
-        throw new Meteor.Error(403, "Not authorized to tag image");
+	throw new Meteor.Error(403, "Not authorized to tag image");
 
       if (opts.host) {
-        Future = Npm.require('fibers/future');
-        var myFuture = new Future();
-        var volume = docker[opts.host].getVolume(opts.Name);
-        volume.inspect(Meteor.bindEnvironment(function(err, result) {
-          if (err) {
-            myFuture.throw(err.reason);
-          }
-          else {
-            result._host = opts.host;
-            VolumesInspect.upsert({_host:opts.host,Name:result.Name}, {$set: result});
-            myFuture.return(result);
-          }
-        }));
-        try {
-          return myFuture.wait();
-        }
-        catch (err) {
-          throw new Meteor.Error('docker', err.toString());
-        }
+	Future = Npm.require('fibers/future');
+	var myFuture = new Future();
+	var volume = docker[opts.host].getVolume(opts.Name);
+	volume.inspect(Meteor.bindEnvironment(function(err, result) {
+	  if (err) {
+	    myFuture.throw(err.reason);
+	  }
+	  else {
+	    result._host = opts.host;
+	    VolumesInspect.upsert({_host:opts.host,Name:result.Name}, {$set: result});
+	    myFuture.return(result);
+	  }
+	}));
+	try {
+	  return myFuture.wait();
+	}
+	catch (err) {
+	  throw new Meteor.Error('docker', err.toString());
+	}
       }
     }}
 });
