@@ -1,4 +1,4 @@
-FROM node:4.4.7
+FROM node:4.5.0
 
 MAINTAINER moise.valvassori@gmail.com 
  
