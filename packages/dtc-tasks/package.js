@@ -12,6 +12,7 @@ Package.describe({
 
 Package.onUse(function(api) {
   api.versionsFrom('1.2.1');
+  api.use('ecmascript', 'client');
   api.use([
     'alanning:roles',
     'templating',
@@ -21,7 +22,6 @@ Package.onUse(function(api) {
     'underscore',
     'dtc-json2table'
   ], 'client');
-
 
   api.use([
     'djedi:modules',
