@@ -52,6 +52,12 @@ Template.images.helpers({
     }
 });
 
+Template.images.onRendered(installScrollHandler('Images', 'imagesLimit'));
+Template.images.onDestroyed(function(){
+  $(window).off('scroll');
+});
+
+
 Template.imageInspect.helpers({
 	configsConfiguration: function() {
 		return {

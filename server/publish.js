@@ -16,33 +16,47 @@ hostEnabledCriteria = function() {
   };
 };
 
-Meteor.publishComposite("images", {
-  find: function() {
-    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'image.list']))
-      return null;
-    return Images.find(hostEnabledCriteria());
-  }
+Meteor.publishComposite("images", function(limit, hostFilter, imageFilter){
+  return {
+    find: function() {
+      check(limit,Number);
+      check(hostFilter,Match.Maybe(String));
+      check(imageFilter,Match.Maybe(String));
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'image.list']))
+	return null;
+      var filters = imageFilters(hostFilter,imageFilter);
+      return Images.find({$and: [hostEnabledCriteria(), filters]},{sort: {Created: -1}, limit: limit});
+    }
+  };
 });
 
 
-Meteor.publishComposite("containers", {
-  find: function() {
-    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'container.list']))
-      return null;
-    var containers = Containers.find(hostEnabledCriteria());
+Meteor.publishComposite("containers", function(limit, hostFilter, containerFilter, containerImgFilter){
+  return {
+    find: function() {
+      check(limit,Number);
+      check(hostFilter,Match.Maybe(String));
+      check(containerFilter,Match.Maybe(String));
+      check(containerImgFilter,Match.Maybe(String));
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'container.list']))
+	return null;
 
-    return containers;
-  },
-  children: [
-    {
-      find: function(container) {
-        return Images.find({
-          _host: container._host,
-          RepoTags: container.Image
-        });
+      var filters = containerFilters(hostFilter, containerFilter, containerImgFilter);
+      var containers = Containers.find({$and: [filters,hostEnabledCriteria()]}, {sort: {Created: -1}, limit: limit});
+
+      return containers;
+    },
+    children: [
+      {
+	find: function(container) {
+	  return Images.find({
+	    _host: container._host,
+	    RepoTags: container.Image
+	  });
+	}
       }
-    }
-  ]
+    ]
+  };
 });
 
 
@@ -156,12 +170,19 @@ Meteor.publishComposite("hostsStatus", {
 });
 
 
-Meteor.publishComposite("volumes_list", {
-  find: function() {
-    if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'volume.list']))
-      return null;
-    return Volumes.find();
-  }
+Meteor.publishComposite("volumes_list",  function(limit, hostFilter){
+  return {
+    find: function() {
+      check(limit,Number);
+      check(hostFilter,Match.Maybe(String));
+      if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'volume.list']))
+	return null;
+      var filter = {};
+      if (hostFilter)
+	filter = _.extend(filter,{_host:hostFilter});
+      return Volumes.find({$and: [hostEnabledCriteria(), filter]},{sort: {Name: -1}, limit: limit});
+    }
+  };
 });
 
 Meteor.publishComposite("volume_inspect", function(hostId, name) {

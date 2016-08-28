@@ -12,7 +12,7 @@ Router.route('/volumes', {
     this.next()
   },
   subscriptions: function() {
-    return [Meteor.subscribe('volumes_list')];
+    return [Meteor.subscribe('volumes_list',Session.get('volumesLimit'),Session.get('hostFilter'))];
   }
 });
 

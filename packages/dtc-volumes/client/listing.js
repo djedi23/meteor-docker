@@ -11,7 +11,13 @@ Template.volumeList.helpers({
   }
 });
 
-
+Meteor.startup(function () {
+  Template.volumeList.onRendered(modules.scroll.installHandler('Volumes', 'volumesLimit'));
+  Template.volumeList.onDestroyed(function(){
+    $(window).off('scroll');
+  });
+  Session.setDefault('volumesLimit',modules.scroll.limit);
+});
 
 Template.volumeList.events({
   'click #bcremove': function(evt, tpl) {
