@@ -2,15 +2,15 @@ hostEnabled = function() {
   return Hosts.find({
     disabled: 'disabled'
   }).map(function(h) {
-           return h._id;
-         });
+    return h._id;
+  });
 };
 
 hostEnabledCriteria = function() {
   return {
     _host: {
       $not: {
-        $in: hostEnabled()
+	$in: hostEnabled()
       }
     }
   };
@@ -66,11 +66,11 @@ Meteor.publishComposite("imageInspect", function(hostId, imgId) {
       check(hostId, String);
       check(imgId, checkDockerId);
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'image.view']))
-        return null;
+	return null;
 
       return ImagesInspect.find({
-        _host: hostId,
-        Id: queryImageId(imgId)
+	_host: hostId,
+	Id: queryImageId(imgId)
       });
     }
   }
@@ -82,66 +82,66 @@ Meteor.publishComposite("containerInspect", function(hostId, containerId) {
       check(hostId, String);
       check(containerId, checkDockerId);
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'container.view']))
-        return null;
+	return null;
 
       fields = {};
       if (!Roles.userIsInRole(this.userId, ['container.logs']))
-        fields.logs = 0;
+	fields.logs = 0;
       if (!Roles.userIsInRole(this.userId, ['container.changes']))
-        fields.changes = 0;
+	fields.changes = 0;
 
       return ContainersInspect.find({
-        _host: hostId,
-        Id: containerId
+	_host: hostId,
+	Id: containerId
       },{fields: fields});
     },
     children: [
       {
-        find: function(container) {
-          if (modules.stats === undefined || modules.stats.active === undefined || !modules.stats.active)
-            return;
-          return ContainersStats.find({
-            _host: container._host,
-            Id: container.Id
-          }, {
-            fields: modules.stats.fields,
-            sort: {
-              read: -1
-            },
-            limit: 60
-          });
-        }
+	find: function(container) {
+	  if (modules.stats === undefined || modules.stats.active === undefined || !modules.stats.active)
+	    return;
+	  return ContainersStats.find({
+	    _host: container._host,
+	    Id: container.Id
+	  }, {
+	    fields: modules.stats.fields,
+	    sort: {
+	      read: -1
+	    },
+	    limit: 60
+	  });
+	}
       },
       {
-        find: function(container) {
-          if (container.HostConfig && container.HostConfig.Links) {
-            var links = _.map(container.HostConfig.Links,
-              function(link) {
-                return link.split(':')[0];
-              });
-            return ContainersInspect.find({
-              Name: {
-                $in: links
-              }
-            }, {
-              fields: {
-                _host: 1,
-                Id: 1,
-                Name: 1
-              }
-            });
-          }
-          return null;
-        }
+	find: function(container) {
+	  if (container.HostConfig && container.HostConfig.Links) {
+	    var links = _.map(container.HostConfig.Links,
+			      function(link) {
+				return link.split(':')[0];
+			      });
+	    return ContainersInspect.find({
+	      Name: {
+		$in: links
+	      }
+	    }, {
+	      fields: {
+		_host: 1,
+		Id: 1,
+		Name: 1
+	      }
+	    });
+	  }
+	  return null;
+	}
       },
       {
-        find: function(container) {
-          var query = {};
-          query['Containers.' + container.Id] = {
-            $exists: true
-          };
-          return NetworksInspect.find(query);
-        }
+	find: function(container) {
+	  var query = {};
+	  query['Containers.' + container.Id] = {
+	    $exists: true
+	  };
+	  return NetworksInspect.find(query);
+	}
       }
     ]
   }
@@ -161,9 +161,9 @@ Meteor.publishComposite("hostsStatus", {
     //         return null;
     return Hosts.find({}, {
       fields: {
-        status: 1,
-        Id: 1,
-        version: 1
+	status: 1,
+	Id: 1,
+	version: 1
       }
     });
   }
@@ -192,10 +192,10 @@ Meteor.publishComposite("volume_inspect", function(hostId, name) {
       check(name, String);
 
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'volume.inspect']))
-        return null;
+	return null;
       return VolumesInspect.find({
-        _host: hostId,
-        Name: name
+	_host: hostId,
+	Name: name
       });
     }
   }
@@ -216,10 +216,10 @@ Meteor.publishComposite("network_inspect", function(hostId, name) {
       check(name, String);
 
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'network.inspect']))
-        return null;
+	return null;
       return NetworksInspect.find({
-        _host: hostId,
-        Name: name
+	_host: hostId,
+	Name: name
       });
     }
   }
@@ -235,7 +235,7 @@ Meteor.publishComposite("swarms_list", {
   children: [
     {
       find: function(host){
-        return SwarmsInspect.find({host:host._host});
+	return SwarmsInspect.find({host:host._host});
       }
     }
   ]
@@ -257,10 +257,10 @@ Meteor.publishComposite("nodes_inspect", function(hostId, id) {
       check(id, String);
 
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'nodes.inspect']))
-        return null;
+	return null;
       return NodesInspect.find({
-        _host: hostId,
-        ID: id
+	_host: hostId,
+	ID: id
       });
     }
   }
@@ -281,10 +281,10 @@ Meteor.publishComposite("services_inspect", function(hostId, id) {
       check(id, String);
 
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'services.inspect']))
-        return null;
+	return null;
       return ServicesInspect.find({
-        _host: hostId,
-        ID: id
+	_host: hostId,
+	ID: id
       });
     }
   }
@@ -300,17 +300,17 @@ Meteor.publishComposite("tasks_list", {
   children: [
     {
       find: function(task){
-        return Nodes.find({ID:task.NodeID},{fields:{ID:1,_host:1,'Description.Hostname':1}});
+	return Nodes.find({ID:task.NodeID},{fields:{ID:1,_host:1,'Description.Hostname':1}});
       }
     },
     {
       find: function(task){
-        return Services.find({ID:task.ServiceID},{fields:{ID:1,_host:1,'Spec.Name':1}});
+	return Services.find({ID:task.ServiceID},{fields:{ID:1,_host:1,'Spec.Name':1}});
       }
     },
     {
       find: function(task){
-        return Containers.find({Id:task.Status.ContainerStatus.ContainerID},{fields:{Id:1,_host:1,'Names':1}});
+	return Containers.find({Id:task.Status.ContainerStatus.ContainerID},{fields:{Id:1,_host:1,'Names':1}});
       }
     }
   ]
@@ -323,10 +323,10 @@ Meteor.publishComposite("tasks_inspect", function(hostId, id) {
       check(id, String);
 
       if (!Roles.userIsInRole(Meteor.users.findOne(this.userId), ['admin', 'tasks.inspect']))
-        return null;
+	return null;
       return TasksInspect.find({
-        _host: hostId,
-        ID: id
+	_host: hostId,
+	ID: id
       });
     }
   }

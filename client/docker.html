@@ -8,14 +8,14 @@
 
 <template name='home'>
   <div class="container">
-  <div class="jumbotron">
-    <h2>Docker Total Controller</h2>
-    {{#if currentUser}}
-    {{#unless host}}<p>Try to add some hosts.</p>{{/unless}}
-    {{#unless image}}<p>pull some images; run some applications.</p>{{/unless}}
-    {{/if}}
-    {{#unless currentUser}}<p>You are not logged in. Sign In to start working.</p>{{/unless}}
-  </div>
+    <div class="jumbotron">
+      <h2>Docker Total Controller</h2>
+      {{#if currentUser}}
+      {{#unless host}}<p>Try to add some hosts.</p>{{/unless}}
+      {{#unless image}}<p>pull some images; run some applications.</p>{{/unless}}
+      {{/if}}
+      {{#unless currentUser}}<p>You are not logged in. Sign In to start working.</p>{{/unless}}
+    </div>
   </div>
   {{#if currentUser}}
   {{> containers}}
