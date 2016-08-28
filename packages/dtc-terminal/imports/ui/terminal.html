@@ -1,0 +1,19 @@
+<template name="terminal">
+  <div>
+    <div class="terminal-container">
+    </div>
+
+    <form class="form-inline">
+      <div class="form-group">
+	<label for="columns">Columns</label>
+	<input type="number" class="form-control" id="columns" placeholder="Horizontal terminal size" value="{{cols}}"/>
+      </div>
+      <div class="form-group">
+	<label for="lines">Lines</label>
+	<input type="number" class="form-control" id="lines" placeholder="Vertical terminal size" value="{{lines}}"/>
+      </div>
+      <button type="submit" class="btn btn-default">Resize</button>
+      <button id="fit" type="button" class="btn btn-default">Fit</button>
+    </form>
+  </div>
+</template>

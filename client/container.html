@@ -79,7 +79,7 @@
 	{{#if isInRole 'container.commit'}}<a href="{{pathFor 'containerCommit' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-camera"></span><span class="hidden-xs"> Commit</span></a>{{/if}}
 	{{#if ensureApi _host '1.17'}}{{#if isInRole 'container.rename'}}<a href="{{pathFor 'containerRename' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Rename</span></a>{{/if}}{{/if}}
 {{!--	{{#if isInRole 'container.copy'}}<a href="{{pathFor 'containerCopy' containerId=Id hostId=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-download"></span><span class="hidden-xs"> Copy</span></a>{{/if}} --}}
-
+	{{#if canAttach}}{{#if isInRole 'container.attach'}}<a href="{{pathFor 'containerAttach' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{attachDisabled}}"><span class="glyphicon glyphicon-paperclip"></span><span class="hidden-xs"> Attach</span></a>{{/if}}{{/if}}
 	{{#if canExec}}{{#if isInRole 'exec.create'}}<a href="{{pathFor 'containerExecCreate' id=Id host=_host}}" role="button" class="btn btn-default" disabled="{{hostInvalid}}"><span class="glyphicon glyphicon-play green"></span><span class="hidden-xs"> Exec create</span></a>{{/if}}{{/if}}
       </div>
 

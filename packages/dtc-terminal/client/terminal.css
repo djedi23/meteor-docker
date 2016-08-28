@@ -1,0 +1,11 @@
+.terminal-container {
+    width: 100%; 
+    min-height: 500px; 
+    margin: 0 auto;
+    padding: 0px;
+}
+
+.terminal-container .terminal {
+    font-size: smaller;
+    padding: 2px;
+}

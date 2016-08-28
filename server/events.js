@@ -38,6 +38,9 @@ eventHandle = function(host, event){
       imageDetail(host, event.id);
     break;
   case 'top':
+  case 'attach':
+  case 'detach':
+  case 'resize':
     break;
   default:
     console.log("unhandled EVENT (API < 22)",event);
@@ -90,6 +93,9 @@ eventHandle1_22 = function(host, event){
 	imageDetail(host, event.id);
       break;
     case 'top':
+    case 'attach':
+    case 'detach':
+    case 'resize':
       break;
     default:
       console.log("unhandled image or container EVENT (API >= 22)",event);

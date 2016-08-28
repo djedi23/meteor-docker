@@ -1,0 +1,14 @@
+<template name="containerAttach">
+  <div class="container">
+    <ol class="breadcrumb">
+      <li><a href="{{pathFor 'containers'}}">Containers</a></li>
+      {{#if multihost}}<li>{{hostId}}</li>{{/if}}
+      <li><a href="{{pathFor 'containersInspect' id=Id host=_host}}">{{IdShort}}</a></li>
+      <li class="active">Attach</li>
+    </ol>
+
+    {{#if isInRole 'container.view'}}
+     {{> terminal host=_host id=Id}}
+    {{/if}}
+  </div>
+</template>

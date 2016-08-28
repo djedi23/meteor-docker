@@ -343,6 +343,16 @@ Template.containerInspect.helpers({
     if (this.State)
       return this.State.Running && !this.State.Paused;
     return undefined;
+  },
+  canAttach: function() {
+    if (this.State)
+      return this.State.Running && !this.State.Paused;
+    return undefined;
+  },
+  attachDisabled: function() {
+    if (this.Config)
+      return this.Config.Tty === false || this.Config.OpenStdin === false;
+    return false;
   }
 });
 
