@@ -73,25 +73,6 @@ dtcVersion =  function(){
 };
 
 
-execDetails = function(hostId, exec){
-  check(hostId, checkHostId);
-
-  if (docker[hostId] === undefined)
-    return;
-  if (exec.inspect)
-    exec.inspect(Meteor.bindEnvironment(function (err, exec) {
-      if (err){
-	console.log(err);
-	return;
-      }
-
-      exec._host = hostId;
-      console.log(EJSON.stringify(exec));
-      //var u = ContainersInspect.upsert({_host:hostId, Id:exec.Id}, {$set: exec});
-    }));
-  return exec;
-};
-
 
 containerDetails = function(hostId, containerId){
   check(hostId, checkHostId);
@@ -298,7 +279,7 @@ imageDetail = function(hostId, imgId){
   }
 };
 
-var containerCall = function(opts, fct) {
+containerCall = function(opts, fct) {
   if (opts.host){
     Future = Npm.require('fibers/future');
     var myFuture = new Future();
@@ -543,30 +524,6 @@ Meteor.methods({
 
     opts.id = opts.container;
     containerCall(opts, 'commit');
-  },
-  'container.exec.create': function(opts,a,b){
-    check(opts,containerExecCreateSchemas);
-    check(opts.id, checkDockerId);
-    check(a,Match.Any);
-    check(b,Match.Any);
-    if (! Roles.userIsInRole(Meteor.user(), ['admin','exec.create']))
-      throw new Meteor.Error(403, "Not authorized to create container exec");
-
-    var exec = containerCall(opts, 'exec');
-    if (exec){
-      exec.start({},Meteor.bindEnvironment(function(err, stream){
-	if (err) {
-	  console.log(err);
-	  return;
-	}
-	stream.pipe(process.stdout);
-
-	var stub = {};
-	stub['execs.'+exec.id] = {};
-	ContainersInspect.upsert({_host:opts.host, Id:opts.id}, {$set: stub});
-	execDetails(opts.host, exec);
-      }));
-    }
   },
   'host.details':function(){
     if (! Roles.userIsInRole(Meteor.user(), ['admin','host.view']))

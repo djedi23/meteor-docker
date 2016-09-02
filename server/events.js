@@ -1,7 +1,7 @@
 eventHandle = function(host, event){
   /*
    Docker containers report the following events:
-   attach, copy, exec_create, exec_start, export, oom, resize
+   copy, exec_create, exec_start, export, oom
    */
   switch(event.status){
   case 'destroy':
@@ -53,7 +53,7 @@ eventHandle = function(host, event){
 eventHandle1_22 = function(host, event){
   /*
    Docker containers report the following events:
-   attach, copy, exec_create, exec_start, export, oom, resize
+   copy, exec_create, exec_start, export, oom
    */
   switch(event.Type){
   case 'image':
@@ -96,9 +96,13 @@ eventHandle1_22 = function(host, event){
     case 'attach':
     case 'detach':
     case 'resize':
+    case 'exec_detach':
       break;
     default:
-      console.log("unhandled image or container EVENT (API >= 22)",event);
+      if (event.Action.startsWith('exec_create') ||
+	  event.Action.startsWith('exec_start')){
+      } else
+	console.log("unhandled image or container EVENT (API >= 22)",event);
     }
     break;
   case 'network':
@@ -109,6 +113,16 @@ eventHandle1_22 = function(host, event){
       break;
     default:
       console.log("unhandled network EVENT (API >= 22)",event);
+    }
+    break;
+  case 'volume':
+    switch(event.Action) {
+    case 'mount':
+    case 'unmount':
+      listVolumes();
+      break;
+    default:
+      console.log("unhandled volume EVENT (API >= 22)",event);
     }
     break;
   default:

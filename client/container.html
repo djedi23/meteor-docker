@@ -161,6 +161,38 @@
   </div>
   {{/if}}
 
+  {{#if ExecIDs}}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Execs</h3>
+    </div>
+    <div class="panel-body">
+      <div class="table-responsive">
+
+	<table class="table table-condensed table-striped">
+	  <thead>
+	    <tr>
+	      <th>ID</th>
+	      <th>COMMAND</th>
+	      <th>RUNNING</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {{#each Execs}}
+	    <tr>
+	      <td>{{ID}}</td>
+	      <td>{{ProcessConfig.entrypoint}}</td>
+	      <td><span class="label {{execRunningClass}}">{{execRunning}}</span></td>
+	    </tr>
+	    {{/each}}
+	  </tbody>
+	</table>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+ 
+  
   {{#if changes}}
   <div class="panel panel-default">
     <div class="panel-heading" data-toggle="collapse" data-target="#containerChanges" aria-expanded="false" aria-controls="containerChanges">

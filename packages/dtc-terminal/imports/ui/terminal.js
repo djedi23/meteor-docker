@@ -19,7 +19,7 @@ Template.terminal.onRendered(function () {
   this.autorun(function(){
     var data = Template.currentData();
     var wsKey = Session.get('attachKey');
-    if (data.id && wsKey) {
+    if (data.id && wsKey && ! Template.instance().term) {
       Session.set('attachKey',undefined);
       term = new Terminal({
 	cursorBlink: true
@@ -30,7 +30,10 @@ Template.terminal.onRendered(function () {
       socket = new WebSocket(socketURL);
       term.open(terminalNode);
       term.fit();
-      Meteor.call('container.resize',data.host,data.id,term.cols,term.rows);
+      if (data.execId)
+	Meteor.call('exec.resize',data.host,data.execId,term.cols,term.rows);
+      else
+	Meteor.call('container.resize',data.host,data.id,term.cols,term.rows);
       Template.instance().cols.set(term.cols);
       Template.instance().lines.set(term.rows);
       socket.onopen = runRealTerminal;
@@ -64,7 +67,10 @@ Template.terminal.events({
     var lines = Number.parseInt(tpl.$('#lines').val());
 
     tpl.term.resize(cols,lines);
-    Meteor.call('container.resize',this.host,this.id,cols,lines);
+    if (this.execId)
+      Meteor.call('exec.resize',this.host,this.execId,cols,lines);
+    else
+      Meteor.call('container.resize',this.host,this.id,cols,lines);
     tpl.cols.set(cols);
     tpl.lines.set(lines);
   },
@@ -73,7 +79,10 @@ Template.terminal.events({
     var term = tpl.term;
 
     term.fit();
-    Meteor.call('container.resize',this.host,this.id,term.cols,term.rows);
+    if (this.execId)
+      Meteor.call('exec.resize',this.host,this.execId,term.cols,term.rows);
+    else
+      Meteor.call('container.resize',this.host,this.id,term.cols,term.rows);
     tpl.cols.set(term.cols);
     tpl.lines.set(term.rows);
   }

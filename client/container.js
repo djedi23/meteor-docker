@@ -273,6 +273,33 @@ Template.containerInspect.helpers({
       return ansi_up.ansi_to_html(ansi_up.escape_for_html(this.logs));
     return null;
   },
+  Execs: function(){
+    return _.map(this.ExecIDs,(id)=>{
+      var exec = this.execs[id];
+//      console.log( id, exec);
+      if (exec !== undefined){
+	exec.ID = exec.ID.substring(0, 12);
+	return exec;
+      }
+      else{
+	Meteor.call('exec.inspect',this._host,id);
+	return {ID : id.substring(0, 12)};
+      }
+    });
+  },
+  execRunning: function(){
+    if (this.Running)
+      return "Running";
+    else if (this.ExitCode)
+      return "Exited: "+this.ExitCode;
+  },
+  execRunningClass: function(){
+    if (this.Running)
+      return "label-success";
+    else if (this.ExitCode)
+      return "label-danger";
+    return "label-info";
+  },
   haveData: function() {
     return !(!this);
   },

@@ -54,6 +54,7 @@ dtc-swarms
 dtc-nodes
 dtc-services
 dtc-tasks
+dtc-terminal
 
 standard-minifier-css@1.2.0
 standard-minifier-js@1.2.0
