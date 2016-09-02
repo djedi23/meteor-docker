@@ -7,6 +7,9 @@
 
 
 <template name='home'>
+  {{#if currentUser}}
+  {{> runHooks 'template.dashboard'}}
+  {{else}}
   <div class="container">
     <div class="jumbotron">
       <h2>Docker Total Controller</h2>
@@ -17,8 +20,6 @@
       {{#unless currentUser}}<p>You are not logged in. Sign In to start working.</p>{{/unless}}
     </div>
   </div>
-  {{#if currentUser}}
-  {{> containers}}
   {{/if}}
 </template>
 

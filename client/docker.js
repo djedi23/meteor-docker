@@ -1,19 +1,23 @@
-
 Template.home.helpers({
     host: function() {
-        return Hosts.find().count() > 0;
+	return Hosts.find().count() > 0;
     },
     image: function() {
-        return Images.find().count() > 0;
+	return Images.find().count() > 0;
     }
+});
+
+Meteor.startup(function(){
+  if (! modules.list('template.dashboard'))
+    modules.push('template.dashboard', 20, 'containers');
 });
 
 Template.hostFilter.helpers({
     multihost: function() {
-        return Hosts.find().count() > 1;
+	return Hosts.find().count() > 1;
     },
     hosts: function() {
-        return Hosts.find();
+	return Hosts.find();
     },
     isSelected: function() {
 	return Session.equals('hostFilter',this._id)?'selected':null;
@@ -23,11 +27,11 @@ Template.hostFilter.helpers({
 
 Template.hostFilter.events({
     'change #hostSelect': function(e,tpl){
-        var host =  Hosts.findOne({Id:$(e.target).val()});
-        
-        if (host)
+	var host =  Hosts.findOne({Id:$(e.target).val()});
+
+	if (host)
 	    Session.set('hostFilter',host._id);
-        else
+	else
 	    Session.set('hostFilter',undefined);
     }
 });
